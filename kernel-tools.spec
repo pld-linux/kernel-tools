@@ -1,6 +1,11 @@
+# TODO
+# - BR deps for -perf
+# - asciidoc used at install stage of perf (should build doc in build section)
+# - different packages for perf-slang and perf-gtk
 #
 # Conditional build:
 %bcond_without	verbose		# verbose build (V=1)
+%bcond_with	perf		# perf tools (unfinished)
 
 %define		rel		0.1
 %define		basever	3.6
@@ -10,7 +15,7 @@ Name:		kernel-tools
 Version:	%{basever}%{postver}
 Release:	%{rel}
 License:	GPL v2
-Group:		Base
+Group:		Applications/System
 Source0:	http://www.kernel.org/pub/linux/kernel/v3.x/linux-%{basever}.tar.xz
 # Source0-md5:	1a1760420eac802c541a20ab51a093d1
 %if "%{postver}" != ".0"
@@ -19,6 +24,13 @@ Patch0:		http://www.kernel.org/pub/linux/kernel/v3.x/patch-%{version}.bz2
 %endif
 BuildRequires:	tar >= 1:1.22
 BuildRequires:	xz
+%if %{with perf}
+BuildRequires:	asciidoc
+BuildRequires:	rpm-pythonprov
+BuildRequires:	xmlto
+# provides perf.h which util/parse-events.l loads via ../perf.h, and -I/usr/include/slang makes it being loaded first
+BuildConflicts:	Firebird-devel
+%endif
 Requires:	%{name}-libs = %{version}-%{release}
 Provides:	cpufreq-utils = 1:009-0.6.p1
 Provides:	cpufrequtils = 1:009-0.6.p1
@@ -56,6 +68,16 @@ Obsoletes:	cpupowerutils-devel < 1:009-0.6.p1
 This package contains the development files for the tools/ directory
 from the kernel source.
 
+%package perf
+Summary:	perf tool
+Group:		Applications/System
+
+%description perf
+Perf is a profiler tool for Linux 2.6+ based systems that abstracts
+away CPU hardware differences in Linux performance measurements and
+presents a simple commandline interface. Perf is based on the
+perf_events interface exported by recent versions of the Linux kernel.
+
 %prep
 %setup -qc
 cd linux-%{basever}
@@ -92,6 +114,29 @@ cd linux-%{basever}
 %{__make} -C tools/power/x86/turbostat \
 	CC="%{__cc}" \
 	%{?with_verbose:V=1}
+%endif
+
+%if %{with perf}
+# perf slang version
+PWD=${PWD:-$(pwd)}
+install -d $PWD/perf-{slang,gtk}
+%{__make} -C tools/perf \
+	O=$PWD/perf-slang \
+	NO_GTK2=1 \
+	CC="%{__cc}" \
+	%{?with_verbose:V=1} \
+	prefix=%{_prefix} \
+	perfexecdir=%{_datadir}/perf-core \
+	template_dir=%{_datadir}/perf-core/templates
+
+# perf gtk version
+%{__make} -C tools/perf \
+	O=$PWD/perf-gtk \
+	CC="%{__cc}" \
+	%{?with_verbose:V=1} \
+	prefix=%{_prefix} \
+	perfexecdir=%{_datadir}/perf-core \
+	template_dir=%{_datadir}/perf-core/templates
 %endif
 
 %install
@@ -143,7 +188,35 @@ cd -
 cd tools/power/x86/turbostat
 install -p turbostat $RPM_BUILD_ROOT%{_bindir}/turbostat
 install -p turbostat.8 $RPM_BUILD_ROOT%{_mandir}/man8
+cd -
 %endif
+%endif
+
+%if %{with perf}
+# perf slang
+PWD=${PWD:-$(pwd)}
+# perf slang version
+%{__make} -j1 install install-man \
+	-C tools/perf \
+	O=$PWD/perf-slang \
+	NO_GTK2=1 \
+	CC="%{__cc}" \
+	%{?with_verbose:V=1} \
+	prefix=%{_prefix} \
+	perfexecdir=%{_datadir}/perf-core \
+	template_dir=%{_datadir}/perf-core/templates \
+	DESTDIR=$RPM_BUILD_ROOT
+
+# perf gtk
+%{__make} -j1 install install-man \
+	-C tools/perf \
+	O=$PWD/perf-gtk \
+	CC="%{__cc}" \
+	%{?with_verbose:V=1} \
+	prefix=%{_prefix} \
+	perfexecdir=%{_datadir}/perf-core \
+	template_dir=%{_datadir}/perf-core/templates \
+	DESTDIR=$RPM_BUILD_ROOT
 %endif
 
 %clean
@@ -176,3 +249,34 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %{_libdir}/libcpupower.so
 %{_includedir}/cpufreq.h
+
+%if %{with perf}
+%files perf
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_bindir}/perf
+%{_mandir}/man1/perf*.1*
+%dir %{_datadir}/perf-core
+%attr(755,root,root) %{_datadir}/perf-core/perf-archive
+
+%dir %{_datadir}/perf-core/scripts
+
+%dir %{_datadir}/perf-core/scripts/perl
+%dir %{_datadir}/perf-core/scripts/perl/Perf-Trace-Util
+%dir %{_datadir}/perf-core/scripts/perl/Perf-Trace-Util/lib
+%dir %{_datadir}/perf-core/scripts/perl/Perf-Trace-Util/lib/Perf
+%dir %{_datadir}/perf-core/scripts/perl/Perf-Trace-Util/lib/Perf/Trace
+%{_datadir}/perf-core/scripts/perl/Perf-Trace-Util/lib/Perf/Trace/*.pm
+%dir %{_datadir}/perf-core/scripts/perl/bin
+%attr(755,root,root) %{_datadir}/perf-core/scripts/perl/bin/*
+%{_datadir}/perf-core/scripts/perl/*.pl
+
+%dir %{_datadir}/perf-core/scripts/python
+%dir %{_datadir}/perf-core/scripts/python/Perf-Trace-Util
+%dir %{_datadir}/perf-core/scripts/python/Perf-Trace-Util/lib
+%dir %{_datadir}/perf-core/scripts/python/Perf-Trace-Util/lib/Perf
+%dir %{_datadir}/perf-core/scripts/python/Perf-Trace-Util/lib/Perf/Trace
+%{_datadir}/perf-core/scripts/python/Perf-Trace-Util/lib/Perf/Trace/*.py
+%dir %{_datadir}/perf-core/scripts/python/bin
+%attr(755,root,root) %{_datadir}/perf-core/scripts/python/bin/*
+%{_datadir}/perf-core/scripts/python/*.py
+%endif
