@@ -3,8 +3,8 @@
 %bcond_without	verbose		# verbose build (V=1)
 
 %define		rel		0.1
-%define		basever	3.6
-%define		postver	.6
+%define		basever	3.5
+%define		postver	.7
 Summary:	Assortment of tools for the Linux kernel
 Name:		kernel-tools
 Version:	%{basever}%{postver}
@@ -12,10 +12,10 @@ Release:	%{rel}
 License:	GPL v2
 Group:		Base
 Source0:	http://www.kernel.org/pub/linux/kernel/v3.x/linux-%{basever}.tar.xz
-# Source0-md5:	1a1760420eac802c541a20ab51a093d1
+# Source0-md5:	24153eaaa81dedc9481ada8cd9c3b83d
 %if "%{postver}" != ".0"
 Patch0:		http://www.kernel.org/pub/linux/kernel/v3.x/patch-%{version}.bz2
-# Patch0-md5:	363e730147333182616cc687345e7fe2
+# Patch0-md5:	f908f8c222cf4a1988b8bf180df46bb2
 %endif
 BuildRequires:	tar >= 1:1.22
 BuildRequires:	xz
