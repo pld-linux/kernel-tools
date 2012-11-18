@@ -139,6 +139,11 @@ install -d $PWD/perf-{slang,gtk}
 	template_dir=%{_datadir}/perf-core/templates
 %endif
 
+# gen_init_cpio
+%{__make} -C usr gen_init_cpio \
+	CC="%{__cc}" \
+	%{?with_verbose:V=1}
+
 %install
 rm -rf $RPM_BUILD_ROOT
 cd linux-%{basever}
@@ -219,6 +224,9 @@ PWD=${PWD:-$(pwd)}
 	DESTDIR=$RPM_BUILD_ROOT
 %endif
 
+# gen_init_cpio
+install usr/gen_init_cpio $RPM_BUILD_ROOT%{_bindir}/gen_init_cpio
+
 %clean
 rm -rf $RPM_BUILD_ROOT
 
@@ -239,6 +247,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man8/turbostat*
 %{_mandir}/man8/x86_energy_perf_policy*
 %endif
+%attr(755,root,root) %{_bindir}/gen_init_cpio
 
 %files libs
 %defattr(644,root,root,755)
