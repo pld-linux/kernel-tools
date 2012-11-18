@@ -45,17 +45,24 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 This package contains the tools/ directory from the kernel source and
 the supporting documentation.
 
-%package libs
-Summary:	Libraries for the kernels-tools
+%package cpupower
+Summary:	cpupower - Shows and sets processor power related values
+Group:		Applications/System
+
+%description cpupower
+cpupower   is  a  collection  of tools to examine and tune power saving related
+features of your processor.
+
+%package cpupower-libs
+Summary:	cpupower libraries
 License:	GPL v2
 Group:		Libraries
 
-%description libs
-This package contains the libraries built from the tools/ directory
-from the kernel source.
+%description cpupower-libs
+cpupower libraries.
 
-%package libs-devel
-Summary:	Assortment of tools for the Linux kernel
+%package cpupower-libs-devel
+Summary:	Development files for the cpupower libraries.
 License:	GPL v2
 Group:		Development/Libraries
 Requires:	kernel-tools = %{version}-%{release}
@@ -64,9 +71,8 @@ Provides:	cpupowerutils-devel = 1:009-0.6.p1
 Provides:	kernel-tools-devel
 Obsoletes:	cpupowerutils-devel < 1:009-0.6.p1
 
-%description libs-devel
-This package contains the development files for the tools/ directory
-from the kernel source.
+%description cpupower-libs-devel
+Development files for the cpupower libraries.
 
 %package perf
 Summary:	perf tool
@@ -230,17 +236,15 @@ install usr/gen_init_cpio $RPM_BUILD_ROOT%{_bindir}/gen_init_cpio
 %clean
 rm -rf $RPM_BUILD_ROOT
 
-%post	libs -p /sbin/ldconfig
-%postun	libs -p /sbin/ldconfig
+%post	cpupower-libs -p /sbin/ldconfig
+%postun	cpupower-libs -p /sbin/ldconfig
 
-%files -f cpupower.lang
+%files
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_bindir}/cpupower
 %ifarch %{ix86} %{x8664}
 %attr(755,root,root) %{_bindir}/centrino-decode
 %attr(755,root,root) %{_bindir}/powernow-k8-decode
 %endif
-%{_mandir}/man[1-8]/cpupower*
 %ifarch %{ix86} %{x8664}
 %attr(755,root,root) %{_bindir}/turbostat
 %attr(755,root,root) %{_bindir}/x86_energy_perf_policy
@@ -249,12 +253,17 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 %attr(755,root,root) %{_bindir}/gen_init_cpio
 
-%files libs
+%files cpupower -f cpupower.lang
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_bindir}/cpupower
+%{_mandir}/man[1-8]/cpupower*
+
+%files cpupower-libs
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libcpupower.so.*.*.*
 %ghost %{_libdir}/libcpupower.so.0
 
-%files libs-devel
+%files cpupower-libs-devel
 %defattr(644,root,root,755)
 %{_libdir}/libcpupower.so
 %{_includedir}/cpufreq.h
