@@ -26,7 +26,9 @@ BuildRequires:	tar >= 1:1.22
 BuildRequires:	xz
 %if %{with perf}
 BuildRequires:	asciidoc
+BuildRequires:	newt-devel
 BuildRequires:	rpm-pythonprov
+BuildRequires:	slang-devel
 BuildRequires:	xmlto
 # provides perf.h which util/parse-events.l loads via ../perf.h, and -I/usr/include/slang makes it being loaded first
 BuildConflicts:	Firebird-devel
