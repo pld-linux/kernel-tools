@@ -43,6 +43,8 @@ Obsoletes:	cpupowerutils < 1:009-0.6.p1
 Obsoletes:	cpuspeed < 1:1.5-16
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
+%define		makeopts	CC="%{__cc}" %{?with_verbose:V=1}
+
 %description
 This package contains the tools/ directory from the kernel source and
 the supporting documentation.
@@ -52,8 +54,8 @@ Summary:	cpupower - Shows and sets processor power related values
 Group:		Applications/System
 
 %description cpupower
-cpupower   is  a  collection  of tools to examine and tune power saving related
-features of your processor.
+cpupower is a collection of tools to examine and tune power saving
+related features of your processor.
 
 %package cpupower-libs
 Summary:	cpupower libraries
@@ -64,7 +66,7 @@ Group:		Libraries
 cpupower libraries.
 
 %package cpupower-libs-devel
-Summary:	Development files for the cpupower libraries.
+Summary:	Development files for the cpupower libraries
 License:	GPL v2
 Group:		Development/Libraries
 Requires:	kernel-tools = %{version}-%{release}
@@ -99,29 +101,24 @@ cd linux-%{basever}
 
 # cpupower
 %{__make} -C tools/power/cpupower \
-	CC="%{__cc}" \
-	%{?with_verbose:V=1} \
+	%{makeopts} \
 	CPUFREQ_BENCH=false
 
 %ifarch %{ix86}
 %{__make} -C tools/power/cpupower/debug/i386 centrino-decode powernow-k8-decode \
-	CC="%{__cc}" \
-	%{?with_verbose:V=1}
+	%{makeopts} \
 %endif
 
 %ifarch %{x8664}
 %{__make} -C tools/power/cpupower/debug/x86_64 centrino-decode powernow-k8-decode \
-	CC="%{__cc}" \
-	%{?with_verbose:V=1}
+	%{makeopts}
 %endif
 
 %ifarch %{ix86} %{x8664}
 %{__make} -C tools/power/x86/x86_energy_perf_policy \
-	CC="%{__cc}" \
-	%{?with_verbose:V=1}
+	%{makeopts}
 %{__make} -C tools/power/x86/turbostat \
-	CC="%{__cc}" \
-	%{?with_verbose:V=1}
+	%{makeopts}
 %endif
 
 %if %{with perf}
@@ -131,8 +128,7 @@ install -d $PWD/perf-{slang,gtk}
 %{__make} -C tools/perf \
 	O=$PWD/perf-slang \
 	NO_GTK2=1 \
-	CC="%{__cc}" \
-	%{?with_verbose:V=1} \
+	%{makeopts} \
 	prefix=%{_prefix} \
 	perfexecdir=%{_datadir}/perf-core \
 	template_dir=%{_datadir}/perf-core/templates
@@ -140,8 +136,7 @@ install -d $PWD/perf-{slang,gtk}
 # perf gtk version
 %{__make} -C tools/perf \
 	O=$PWD/perf-gtk \
-	CC="%{__cc}" \
-	%{?with_verbose:V=1} \
+	%{makeopts} \
 	prefix=%{_prefix} \
 	perfexecdir=%{_datadir}/perf-core \
 	template_dir=%{_datadir}/perf-core/templates
@@ -149,8 +144,7 @@ install -d $PWD/perf-{slang,gtk}
 
 # gen_init_cpio
 %{__make} -C usr gen_init_cpio \
-	CC="%{__cc}" \
-	%{?with_verbose:V=1}
+	%{makeopts} \
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -233,7 +227,7 @@ PWD=${PWD:-$(pwd)}
 %endif
 
 # gen_init_cpio
-install usr/gen_init_cpio $RPM_BUILD_ROOT%{_bindir}/gen_init_cpio
+install -p usr/gen_init_cpio $RPM_BUILD_ROOT%{_bindir}/gen_init_cpio
 
 %clean
 rm -rf $RPM_BUILD_ROOT
