@@ -38,13 +38,6 @@ BuildRequires:	xmlto
 BuildConflicts:	Firebird-devel
 %endif
 Requires:	%{name}-libs = %{version}-%{release}
-Provides:	cpufreq-utils = 1:009-0.6.p1
-Provides:	cpufrequtils = 1:009-0.6.p1
-Provides:	cpupowerutils = 1:009-0.6.p1
-Obsoletes:	cpufreq-utils < 1:009-0.6.p1
-Obsoletes:	cpufrequtils < 1:009-0.6.p1
-Obsoletes:	cpupowerutils < 1:009-0.6.p1
-Obsoletes:	cpuspeed < 1:1.5-16
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		makeopts	CC="%{__cc}" %{?with_verbose:V=1}
@@ -58,6 +51,13 @@ Summary:	cpupower - Shows and sets processor power related values
 Group:		Applications/System
 Requires(post,preun,postun):	systemd-units >= 38
 Requires:	systemd-units >= 0.38
+Provides:	cpufreq-utils = 1:009-0.6.p1
+Provides:	cpufrequtils = 1:009-0.6.p1
+Provides:	cpupowerutils = 1:009-0.6.p1
+Obsoletes:	cpufreq-utils < 1:009-0.6.p1
+Obsoletes:	cpufrequtils < 1:009-0.6.p1
+Obsoletes:	cpupowerutils < 1:009-0.6.p1
+Obsoletes:	cpuspeed < 1:1.5-16
 
 %description cpupower
 cpupower is a collection of tools to examine and tune power saving
