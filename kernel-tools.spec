@@ -8,7 +8,7 @@
 %bcond_without	verbose		# verbose build (V=1)
 %bcond_with	perf		# perf tools (unfinished)
 
-%define		rel		0.3
+%define		rel		0.4
 %define		basever	3.6
 %define		postver	.7
 Summary:	Assortment of tools for the Linux kernel
@@ -37,7 +37,6 @@ BuildRequires:	xmlto
 # provides perf.h which util/parse-events.l loads via ../perf.h, and -I/usr/include/slang makes it being loaded first
 BuildConflicts:	Firebird-devel
 %endif
-Requires:	%{name}-libs = %{version}-%{release}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		makeopts	CC="%{__cc}" %{?with_verbose:V=1}
@@ -58,6 +57,7 @@ Obsoletes:	cpufreq-utils < 1:009-0.6.p1
 Obsoletes:	cpufrequtils < 1:009-0.6.p1
 Obsoletes:	cpupowerutils < 1:009-0.6.p1
 Obsoletes:	cpuspeed < 1:1.5-16
+Requires:	%{name}-cpupower-libs = %{version}-%{release}
 
 %description cpupower
 cpupower is a collection of tools to examine and tune power saving
