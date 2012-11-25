@@ -2,12 +2,13 @@
 # - BR deps for -perf
 # - asciidoc used at install stage of perf (should build doc in build section)
 # - different packages for perf-slang and perf-gtk
+
 #
 # Conditional build:
 %bcond_without	verbose		# verbose build (V=1)
 %bcond_with	perf		# perf tools (unfinished)
 
-%define		rel		0.1
+%define		rel		0.3
 %define		basever	3.6
 %define		postver	.6
 Summary:	Assortment of tools for the Linux kernel
@@ -22,6 +23,9 @@ Source0:	http://www.kernel.org/pub/linux/kernel/v3.x/linux-%{basever}.tar.xz
 Patch0:		http://www.kernel.org/pub/linux/kernel/v3.x/patch-%{version}.bz2
 # Patch0-md5:	363e730147333182616cc687345e7fe2
 %endif
+Source1:	cpupower.service
+Source2:	cpupower.config
+BuildRequires:	rpmbuild(macros) >= 1.647
 BuildRequires:	tar >= 1:1.22
 BuildRequires:	xz
 %if %{with perf}
@@ -52,6 +56,8 @@ the supporting documentation.
 %package cpupower
 Summary:	cpupower - Shows and sets processor power related values
 Group:		Applications/System
+Requires(post,preun,postun):	systemd-units >= 38
+Requires:	systemd-units >= 0.38
 
 %description cpupower
 cpupower is a collection of tools to examine and tune power saving
@@ -159,6 +165,10 @@ cd linux-%{basever}
 %find_lang cpupower
 mv cpupower.lang ..
 
+install -d $RPM_BUILD_ROOT{/etc/sysconfig,%{systemdunitdir}}
+cp -p %{SOURCE1} $RPM_BUILD_ROOT%{systemdunitdir}/cpupower.service
+cp -p %{SOURCE2} $RPM_BUILD_ROOT/etc/sysconfig/cpupower
+
 %ifarch %{ix86}
 cd tools/power/cpupower/debug/i386
 install -p centrino-decode $RPM_BUILD_ROOT%{_bindir}/centrino-decode
@@ -235,6 +245,15 @@ rm -rf $RPM_BUILD_ROOT
 %post	cpupower-libs -p /sbin/ldconfig
 %postun	cpupower-libs -p /sbin/ldconfig
 
+%post cpupower
+%systemd_post cpupower.service
+
+%preun cpupower
+%systemd_preun cpupower.service
+
+%postun cpupower
+%systemd_reload
+
 %files
 %defattr(644,root,root,755)
 %ifarch %{ix86} %{x8664}
@@ -253,6 +272,8 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/cpupower
 %{_mandir}/man[1-8]/cpupower*
+%{systemdunitdir}/cpupower.service
+%config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/cpupower
 
 %files cpupower-libs
 %defattr(644,root,root,755)
