@@ -8,7 +8,7 @@
 %bcond_without	verbose		# verbose build (V=1)
 %bcond_with	perf		# perf tools (unfinished)
 
-%define		rel		0.4
+%define		rel		0.5
 %define		basever	3.6
 %define		postver	.7
 Summary:	Assortment of tools for the Linux kernel
@@ -75,10 +75,9 @@ cpupower libraries.
 Summary:	Development files for the cpupower libraries
 License:	GPL v2
 Group:		Development/Libraries
-Requires:	kernel-tools = %{version}-%{release}
-Requires:	kernel-tools-libs = %{version}-%{release}
+Requires:	%{name} = %{version}-%{release}
+Requires:	%{name}-cpupower-libs = %{version}-%{release}
 Provides:	cpupowerutils-devel = 1:009-0.6.p1
-Provides:	kernel-tools-devel
 Obsoletes:	cpupowerutils-devel < 1:009-0.6.p1
 
 %description cpupower-libs-devel
