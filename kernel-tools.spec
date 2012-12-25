@@ -1,8 +1,8 @@
 # TODO
 # - unpackaged: /etc/bash_completion.d/perf
-# - BR deps for -perf
-# - asciidoc used at install stage of perf (should build doc in build section)
+# - verify BR deps for -perf
 # - different packages for perf-slang and perf-gtk
+# - optflags
 
 #
 # Conditional build:
@@ -27,12 +27,23 @@ Patch0:		http://www.kernel.org/pub/linux/kernel/v3.x/patch-%{version}.bz2
 %endif
 Source1:	cpupower.service
 Source2:	cpupower.config
+URL:		http://www.kernel.org/
 BuildRequires:	rpmbuild(macros) >= 1.647
 BuildRequires:	tar >= 1:1.22
 BuildRequires:	xz
 %if %{with perf}
 BuildRequires:	asciidoc
+BuildRequires:	audit-libs-devel
+BuildRequires:	bison
+BuildRequires:	docbook-style-xsl
+BuildRequires:	elfutils-devel
+BuildRequires:	flex
+BuildRequires:	gtk+2-devel >= 2.0
+BuildRequires:	libunwind-devel >= 0.99
 BuildRequires:	newt-devel
+BuildRequires:	perl-devel >= 5.1
+BuildRequires:	pkgconfig
+BuildRequires:	python-devel
 BuildRequires:	rpm-pythonprov
 BuildRequires:	slang-devel
 BuildRequires:	xmlto
@@ -153,7 +164,7 @@ cd linux-%{basever}
 # perf slang version
 PWD=${PWD:-$(pwd)}
 install -d $PWD/perf-{slang,gtk}
-%{__make} -C tools/perf \
+%{__make} -C tools/perf all man \
 	O=$PWD/perf-slang \
 	NO_GTK2=1 \
 	%{makeopts} \
@@ -162,7 +173,7 @@ install -d $PWD/perf-{slang,gtk}
 	template_dir=%{_datadir}/perf-core/templates
 
 # perf gtk version
-%{__make} -C tools/perf \
+%{__make} -C tools/perf all man \
 	O=$PWD/perf-gtk \
 	%{makeopts} \
 	prefix=%{_prefix} \
