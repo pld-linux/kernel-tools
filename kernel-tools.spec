@@ -12,6 +12,7 @@
 %define		basever	3.6
 %define		postver	.7
 Summary:	Assortment of tools for the Linux kernel
+Summary(pl.UTF-8):	Zestaw narzędzi dla jądra Linuksa
 Name:		kernel-tools
 Version:	%{basever}%{postver}
 Release:	%{rel}
@@ -42,11 +43,16 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %define		makeopts	CC="%{__cc}" %{?with_verbose:V=1}
 
 %description
-This package contains the tools/ directory from the kernel source and
-the supporting documentation.
+This package contains the software from tools/ subdirectory from Linux
+kernel source and the supporting documentation.
+
+%description -l pl.UTF-8
+Ten pakiet zawiera oprogramowanie z podkatalogu tools/ ze źródeł jądra
+Linuksa oraz związaną z nim dokumentację.
 
 %package cpupower
 Summary:	cpupower - Shows and sets processor power related values
+Summary(pl.UTF-8):	cpupower - wyświetlanie i ustawianie wartości związanych z zużyciem energii przez procesor
 Group:		Applications/System
 Requires(post,preun,postun):	systemd-units >= 38
 Requires:	systemd-units >= 0.38
@@ -63,17 +69,24 @@ Requires:	%{name}-cpupower-libs = %{version}-%{release}
 cpupower is a collection of tools to examine and tune power saving
 related features of your processor.
 
+%description cpupower -l pl.UTF-8
+cpupower to zbiór narzędzi do sprawdzania i ustawiania opcji procesora
+związanych z oszczędzaniem energii.
+
 %package cpupower-libs
-Summary:	cpupower libraries
-License:	GPL v2
+Summary:	cpupower library
+Summary(pl.UTF-8):	Biblioteka cpupower
 Group:		Libraries
 
 %description cpupower-libs
-cpupower libraries.
+cpupower library.
+
+%description cpupower-libs -l pl.UTF-8
+Biblioteka cpupower.
 
 %package cpupower-libs-devel
-Summary:	Development files for the cpupower libraries
-License:	GPL v2
+Summary:	Development files for the cpupower library
+Summary(pl.UTF-8):	Pliki programistyczne biblioteki cpupower
 Group:		Development/Libraries
 Requires:	%{name} = %{version}-%{release}
 Requires:	%{name}-cpupower-libs = %{version}-%{release}
@@ -81,10 +94,14 @@ Provides:	cpupowerutils-devel = 1:009-0.6.p1
 Obsoletes:	cpupowerutils-devel < 1:009-0.6.p1
 
 %description cpupower-libs-devel
-Development files for the cpupower libraries.
+Development files for the cpupower library.
+
+%description cpupower-libs-devel -l pl.UTF-8
+Pliki programistyczne biblioteki cpupower.
 
 %package perf
-Summary:	perf tool
+Summary:	perf profiler tool
+Summary(pl.UTF-8):	Narzędzie profilujące perf
 Group:		Applications/System
 
 %description perf
@@ -92,6 +109,13 @@ Perf is a profiler tool for Linux 2.6+ based systems that abstracts
 away CPU hardware differences in Linux performance measurements and
 presents a simple commandline interface. Perf is based on the
 perf_events interface exported by recent versions of the Linux kernel.
+
+%description perf -l pl.UTF-8
+Perf to narzędzie profilujące dla systemów opartych na Linuksie 2.6+,
+odseparowujące od różnic sprzętowych między pomiarami wydajności w
+zależności od procesora oraz udostępniające prosty interfejs linii
+poleceń. Perf jest oparty na interfejsie perf_events eksportowanym
+przez nowe wersje jądra Linuksa.
 
 %prep
 %setup -qc
@@ -155,7 +179,7 @@ install -d $PWD/perf-{slang,gtk}
 rm -rf $RPM_BUILD_ROOT
 cd linux-%{basever}
 
-%{__make} -C tools/power/cpupower  install \
+%{__make} -C tools/power/cpupower install \
 	DESTDIR=$RPM_BUILD_ROOT \
 	libdir=%{_libdir} \
 	mandir=%{_mandir} \
@@ -262,26 +286,26 @@ rm -rf $RPM_BUILD_ROOT
 %ifarch %{ix86} %{x8664}
 %attr(755,root,root) %{_bindir}/turbostat
 %attr(755,root,root) %{_bindir}/x86_energy_perf_policy
-%{_mandir}/man8/turbostat*
-%{_mandir}/man8/x86_energy_perf_policy*
+%{_mandir}/man8/turbostat.8*
+%{_mandir}/man8/x86_energy_perf_policy.8*
 %endif
 %attr(755,root,root) %{_bindir}/gen_init_cpio
 
 %files cpupower -f cpupower.lang
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/cpupower
-%{_mandir}/man[1-8]/cpupower*
+%{_mandir}/man1/cpupower*.1*
 %{systemdunitdir}/cpupower.service
 %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/cpupower
 
 %files cpupower-libs
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libcpupower.so.*.*.*
-%ghost %{_libdir}/libcpupower.so.0
+%attr(755,root,root) %ghost %{_libdir}/libcpupower.so.0
 
 %files cpupower-libs-devel
 %defattr(644,root,root,755)
-%{_libdir}/libcpupower.so
+%attr(755,root,root) %{_libdir}/libcpupower.so
 %{_includedir}/cpufreq.h
 
 %if %{with perf}
