@@ -1,4 +1,5 @@
 # TODO
+# - unpackaged: /etc/bash_completion.d/perf
 # - BR deps for -perf
 # - asciidoc used at install stage of perf (should build doc in build section)
 # - different packages for perf-slang and perf-gtk
@@ -9,8 +10,8 @@
 %bcond_with	perf		# perf tools (unfinished)
 
 %define		rel		0.5
-%define		basever	3.6
-%define		postver	.7
+%define		basever	3.7
+%define		postver	.1
 Summary:	Assortment of tools for the Linux kernel
 Summary(pl.UTF-8):	Zestaw narzędzi dla jądra Linuksa
 Name:		kernel-tools
@@ -19,10 +20,10 @@ Release:	%{rel}
 License:	GPL v2
 Group:		Applications/System
 Source0:	http://www.kernel.org/pub/linux/kernel/v3.x/linux-%{basever}.tar.xz
-# Source0-md5:	1a1760420eac802c541a20ab51a093d1
+# Source0-md5:	21223369d682bcf44bcdfe1521095983
 %if "%{postver}" != ".0"
 Patch0:		http://www.kernel.org/pub/linux/kernel/v3.x/patch-%{version}.bz2
-# Patch0-md5:	e222aa73f705b8874e1ba880f99593ce
+# Patch0-md5:	c391dc1a1b4dae81aaef6f08a0594813
 %endif
 Source1:	cpupower.service
 Source2:	cpupower.config
@@ -35,8 +36,6 @@ BuildRequires:	newt-devel
 BuildRequires:	rpm-pythonprov
 BuildRequires:	slang-devel
 BuildRequires:	xmlto
-# provides perf.h which util/parse-events.l loads via ../perf.h, and -I/usr/include/slang makes it being loaded first
-BuildConflicts:	Firebird-devel
 %endif
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
