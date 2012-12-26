@@ -1,13 +1,10 @@
 # TODO
-# - unpackaged: /etc/bash_completion.d/perf
-# - verify BR deps for -perf
-# - different packages for perf-slang and perf-gtk
 # - optflags
 
 #
 # Conditional build:
 %bcond_without	verbose		# verbose build (V=1)
-%bcond_with	perf		# perf tools (unfinished)
+%bcond_without	perf		# perf tools
 
 %define		rel		0.5
 %define		basever	3.7
@@ -34,6 +31,7 @@ BuildRequires:	xz
 %if %{with perf}
 BuildRequires:	asciidoc
 BuildRequires:	audit-libs-devel
+BuildRequires:	binutils-devel
 BuildRequires:	bison
 BuildRequires:	docbook-style-xsl
 BuildRequires:	elfutils-devel
@@ -109,23 +107,88 @@ Development files for the cpupower library.
 %description cpupower-libs-devel -l pl.UTF-8
 Pliki programistyczne biblioteki cpupower.
 
-%package perf
-Summary:	perf profiler tool
-Summary(pl.UTF-8):	Narzędzie profilujące perf
+%package perf-core
+Summary:	perf profiler tool (core package)
+Summary(pl.UTF-8):	Narzędzie profilujące perf (podstawowe narzędzia)
 Group:		Applications/System
 
-%description perf
+%description perf-core
 Perf is a profiler tool for Linux 2.6+ based systems that abstracts
 away CPU hardware differences in Linux performance measurements and
 presents a simple commandline interface. Perf is based on the
 perf_events interface exported by recent versions of the Linux kernel.
 
-%description perf -l pl.UTF-8
+This package contains core files and scripts.
+
+%description perf-core -l pl.UTF-8
 Perf to narzędzie profilujące dla systemów opartych na Linuksie 2.6+,
 odseparowujące od różnic sprzętowych między pomiarami wydajności w
 zależności od procesora oraz udostępniające prosty interfejs linii
 poleceń. Perf jest oparty na interfejsie perf_events eksportowanym
 przez nowe wersje jądra Linuksa.
+
+Ten pakiet zawiera podstawowe pliki i skrypty.
+
+%package perf-gtk
+Summary:	perf profiler tool (GTK+ GUI)
+Summary(pl.UTF-8):	Narzędzie profilujące perf (interfejs graficzny GTK+)
+Group:		X11/Applications
+Requires:	%{name}-perf-core = %{version}-%{release}
+Provides:	%{name}-perf = %{version}-%{release}
+
+%description perf-gtk
+Perf is a profiler tool for Linux 2.6+ based systems that abstracts
+away CPU hardware differences in Linux performance measurements and
+presents a simple commandline interface. Perf is based on the
+perf_events interface exported by recent versions of the Linux kernel.
+
+This package contains GTK+ based GUI.
+
+%description perf-gtk -l pl.UTF-8
+Perf to narzędzie profilujące dla systemów opartych na Linuksie 2.6+,
+odseparowujące od różnic sprzętowych między pomiarami wydajności w
+zależności od procesora oraz udostępniające prosty interfejs linii
+poleceń. Perf jest oparty na interfejsie perf_events eksportowanym
+przez nowe wersje jądra Linuksa.
+
+Ten pakiet zawiera graficzny interfejs oparty na GTK+.
+
+%package perf-slang
+Summary:	perf profiler tool (Slang TUI)
+Summary(pl.UTF-8):	Narzędzie profilujące perf (interfejs tekstowy Slang)
+Group:		X11/Applications
+Requires:	%{name}-perf-core = %{version}-%{release}
+Provides:	%{name}-perf = %{version}-%{release}
+
+%description perf-slang
+Perf is a profiler tool for Linux 2.6+ based systems that abstracts
+away CPU hardware differences in Linux performance measurements and
+presents a simple commandline interface. Perf is based on the
+perf_events interface exported by recent versions of the Linux kernel.
+
+This package contains Slang based TUI.
+
+%description perf-slang -l pl.UTF-8
+Perf to narzędzie profilujące dla systemów opartych na Linuksie 2.6+,
+odseparowujące od różnic sprzętowych między pomiarami wydajności w
+zależności od procesora oraz udostępniające prosty interfejs linii
+poleceń. Perf jest oparty na interfejsie perf_events eksportowanym
+przez nowe wersje jądra Linuksa.
+
+Ten pakiet zawiera tekstowy interfejs oparty na bibliotece Slang.
+
+%package -n bash-completion-perf
+Summary:	Bash completion for perf command
+Summary(pl.UTF-8):	Bashowe uzupełnianie parametrów dla polecenia perf
+Group:		Applications/Shells
+Requires:	%{name}-perf = %{version}-%{release}
+Requires:	bash-completion
+
+%description -n bash-completion-perf
+Bash completion for perf command.
+
+%description -n bash-completion-perf -l pl.UTF-8
+Bashowe uzupełnianie parametrów dla polecenia perf.
 
 %prep
 %setup -qc
@@ -256,6 +319,7 @@ PWD=${PWD:-$(pwd)}
 	perfexecdir=%{_datadir}/perf-core \
 	template_dir=%{_datadir}/perf-core/templates \
 	DESTDIR=$RPM_BUILD_ROOT
+%{__mv} $RPM_BUILD_ROOT%{_bindir}/perf{,-slang}
 
 # perf gtk
 %{__make} -j1 install install-man \
@@ -267,6 +331,10 @@ PWD=${PWD:-$(pwd)}
 	perfexecdir=%{_datadir}/perf-core \
 	template_dir=%{_datadir}/perf-core/templates \
 	DESTDIR=$RPM_BUILD_ROOT
+%{__mv} $RPM_BUILD_ROOT%{_bindir}/perf{,-gtk}
+
+%py_comp $RPM_BUILD_ROOT%{_datadir}/perf-core/scripts/python
+%py_ocomp $RPM_BUILD_ROOT%{_datadir}/perf-core/scripts/python
 %endif
 
 # gen_init_cpio
@@ -319,9 +387,8 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/cpufreq.h
 
 %if %{with perf}
-%files perf
+%files perf-core
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_bindir}/perf
 %{_mandir}/man1/perf*.1*
 %dir %{_datadir}/perf-core
 %attr(755,root,root) %{_datadir}/perf-core/perf-archive
@@ -343,8 +410,20 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{_datadir}/perf-core/scripts/python/Perf-Trace-Util/lib
 %dir %{_datadir}/perf-core/scripts/python/Perf-Trace-Util/lib/Perf
 %dir %{_datadir}/perf-core/scripts/python/Perf-Trace-Util/lib/Perf/Trace
-%{_datadir}/perf-core/scripts/python/Perf-Trace-Util/lib/Perf/Trace/*.py
+%{_datadir}/perf-core/scripts/python/Perf-Trace-Util/lib/Perf/Trace/*.py*
 %dir %{_datadir}/perf-core/scripts/python/bin
 %attr(755,root,root) %{_datadir}/perf-core/scripts/python/bin/*
-%{_datadir}/perf-core/scripts/python/*.py
+%{_datadir}/perf-core/scripts/python/*.py*
+
+%files perf-gtk
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_bindir}/perf-gtk
+
+%files perf-slang
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_bindir}/perf-slang
+
+%files -n bash-completion-perf
+%defattr(644,root,root,755)
+/etc/bash_completion.d/perf
 %endif
