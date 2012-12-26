@@ -1,6 +1,3 @@
-# TODO
-# - optflags
-
 #
 # Conditional build:
 %bcond_without	verbose		# verbose build (V=1)
@@ -204,23 +201,29 @@ cd linux-%{basever}
 # cpupower
 %{__make} -C tools/power/cpupower \
 	%{makeopts} \
-	CPUFREQ_BENCH=false
+	CPUFREQ_BENCH=false \
+	OPTIMIZATION="%{rpmcflags}" \
+	STRIPCMD=true
 
 %ifarch %{ix86}
 %{__make} -C tools/power/cpupower/debug/i386 centrino-decode powernow-k8-decode \
-	%{makeopts} \
+	CC="%{__cc}" \
+	CFLAGS="%{rpmcflags}"
 %endif
 
 %ifarch %{x8664}
 %{__make} -C tools/power/cpupower/debug/x86_64 centrino-decode powernow-k8-decode \
-	%{makeopts}
+	CC="%{__cc}" \
+	CFLAGS="%{rpmcflags}"
 %endif
 
 %ifarch %{ix86} %{x8664}
 %{__make} -C tools/power/x86/x86_energy_perf_policy \
-	%{makeopts}
+	CC="%{__cc}" \
+	CFLAGS="%{rpmcflags}"
 %{__make} -C tools/power/x86/turbostat \
-	%{makeopts}
+	CC="%{__cc}" \
+	CFLAGS="%{rpmcflags} -Wall"
 %endif
 
 # slabinfo
@@ -236,6 +239,7 @@ install -d $PWD/perf-{slang,gtk}
 	O=$PWD/perf-slang \
 	NO_GTK2=1 \
 	%{makeopts} \
+	CFLAGS_OPTIMIZE="%{rpmcflags}" \
 	prefix=%{_prefix} \
 	perfexecdir=%{_datadir}/perf-core \
 	template_dir=%{_datadir}/perf-core/templates
@@ -244,6 +248,7 @@ install -d $PWD/perf-{slang,gtk}
 %{__make} -C tools/perf all man \
 	O=$PWD/perf-gtk \
 	%{makeopts} \
+	CFLAGS_OPTIMIZE="%{rpmcflags}" \
 	prefix=%{_prefix} \
 	perfexecdir=%{_datadir}/perf-core \
 	template_dir=%{_datadir}/perf-core/templates
@@ -252,6 +257,7 @@ install -d $PWD/perf-{slang,gtk}
 # gen_init_cpio
 %{__make} -C usr gen_init_cpio \
 	%{makeopts} \
+	CFLAGS="%{rpmcflags}"
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -315,6 +321,7 @@ PWD=${PWD:-$(pwd)}
 	O=$PWD/perf-slang \
 	NO_GTK2=1 \
 	CC="%{__cc}" \
+	CFLAGS_OPTIMIZE="%{rpmcflags}" \
 	%{?with_verbose:V=1} \
 	prefix=%{_prefix} \
 	perfexecdir=%{_datadir}/perf-core \
@@ -327,6 +334,7 @@ PWD=${PWD:-$(pwd)}
 	-C tools/perf \
 	O=$PWD/perf-gtk \
 	CC="%{__cc}" \
+	CFLAGS_OPTIMIZE="%{rpmcflags}" \
 	%{?with_verbose:V=1} \
 	prefix=%{_prefix} \
 	perfexecdir=%{_datadir}/perf-core \
