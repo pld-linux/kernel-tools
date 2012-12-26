@@ -223,6 +223,11 @@ cd linux-%{basever}
 	%{makeopts}
 %endif
 
+# slabinfo
+%{__make} -C tools/vm \
+	CC="%{__cc}" \
+	CFLAGS="%{rpmcflags} -Wall -Wextra"
+
 %if %{with perf}
 # perf slang version
 PWD=${PWD:-$(pwd)}
@@ -266,17 +271,13 @@ cp -p %{SOURCE1} $RPM_BUILD_ROOT%{systemdunitdir}/cpupower.service
 cp -p %{SOURCE2} $RPM_BUILD_ROOT/etc/sysconfig/cpupower
 
 %ifarch %{ix86}
-cd tools/power/cpupower/debug/i386
-install -p centrino-decode $RPM_BUILD_ROOT%{_bindir}/centrino-decode
-install -p powernow-k8-decode $RPM_BUILD_ROOT%{_bindir}/powernow-k8-decode
-cd -
+install -p tools/power/cpupower/debug/i386/{centrino,powernow-k8}-decode $RPM_BUILD_ROOT%{_bindir}
 %endif
 %ifarch %{x8664}
-cd tools/power/cpupower/debug/x86_64
-install -p centrino-decode $RPM_BUILD_ROOT%{_bindir}/centrino-decode
-install -p powernow-k8-decode $RPM_BUILD_ROOT%{_bindir}/powernow-k8-decode
-cd -
+install -p tools/power/cpupower/debug/x86_64/{centrino,powernow-k8}-decode $RPM_BUILD_ROOT%{_bindir}
 %endif
+
+install tools/vm/slabinfo $RPM_BUILD_ROOT%{_bindir}
 
 %ifarch %{ix86} %{x8664}
 install -d $RPM_BUILD_ROOT%{_mandir}/man8
@@ -357,6 +358,8 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
+%attr(755,root,root) %{_bindir}/gen_init_cpio
+%attr(755,root,root) %{_bindir}/slabinfo
 %ifarch %{ix86} %{x8664}
 %attr(755,root,root) %{_bindir}/centrino-decode
 %attr(755,root,root) %{_bindir}/powernow-k8-decode
@@ -367,7 +370,6 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man8/turbostat.8*
 %{_mandir}/man8/x86_energy_perf_policy.8*
 %endif
-%attr(755,root,root) %{_bindir}/gen_init_cpio
 
 %files cpupower -f cpupower.lang
 %defattr(644,root,root,755)
