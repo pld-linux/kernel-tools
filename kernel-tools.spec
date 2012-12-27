@@ -60,6 +60,7 @@ Summary:	cpupower - Shows and sets processor power related values
 Summary(pl.UTF-8):	cpupower - wyświetlanie i ustawianie wartości związanych z zużyciem energii przez procesor
 Group:		Applications/System
 Requires(post,preun,postun):	systemd-units >= 38
+Requires:	%{name}-cpupower-libs = %{version}-%{release}
 Requires:	systemd-units >= 0.38
 Provides:	cpufreq-utils = 1:009-0.6.p1
 Provides:	cpufrequtils = 1:009-0.6.p1
@@ -68,7 +69,6 @@ Obsoletes:	cpufreq-utils < 1:009-0.6.p1
 Obsoletes:	cpufrequtils < 1:009-0.6.p1
 Obsoletes:	cpupowerutils < 1:009-0.6.p1
 Obsoletes:	cpuspeed < 1:1.5-16
-Requires:	%{name}-cpupower-libs = %{version}-%{release}
 
 %description cpupower
 cpupower is a collection of tools to examine and tune power saving
@@ -95,7 +95,9 @@ Summary(pl.UTF-8):	Pliki programistyczne biblioteki cpupower
 Group:		Development/Libraries
 Requires:	%{name} = %{version}-%{release}
 Requires:	%{name}-cpupower-libs = %{version}-%{release}
+Provides:	cpufrequtils-devel = 1:009-0.6.p1
 Provides:	cpupowerutils-devel = 1:009-0.6.p1
+Obsoletes:	cpufrequtils-devel < 1:009-0.6.p1
 Obsoletes:	cpupowerutils-devel < 1:009-0.6.p1
 
 %description cpupower-libs-devel
