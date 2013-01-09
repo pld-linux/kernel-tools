@@ -1,9 +1,12 @@
-#
+# TODO:
+# - redefine: PACKAGE_BUGREPORT=cpufreq@vger.kernel.org
+# -n python-perf?
+
 # Conditional build:
 %bcond_without	verbose		# verbose build (V=1)
 %bcond_without	perf		# perf tools
 
-%define		rel		0.5
+%define		rel		1
 %define		basever	3.7
 %define		postver	.1
 Summary:	Assortment of tools for the Linux kernel
