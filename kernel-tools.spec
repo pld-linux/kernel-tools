@@ -6,7 +6,7 @@
 %bcond_without	verbose		# verbose build (V=1)
 %bcond_without	perf		# perf tools
 
-%define		rel		1
+%define		rel		2
 %define		basever	3.7
 %define		postver	.2
 Summary:	Assortment of tools for the Linux kernel
@@ -332,7 +332,7 @@ PWD=${PWD:-$(pwd)}
 	perfexecdir=%{_datadir}/perf-core \
 	template_dir=%{_datadir}/perf-core/templates \
 	DESTDIR=$RPM_BUILD_ROOT
-%{__mv} $RPM_BUILD_ROOT%{_bindir}/perf{,-slang}
+%{__mv} $RPM_BUILD_ROOT%{_bindir}/perf{,_slang}
 
 # perf gtk
 %{__make} -j1 install install-man \
@@ -345,7 +345,7 @@ PWD=${PWD:-$(pwd)}
 	perfexecdir=%{_datadir}/perf-core \
 	template_dir=%{_datadir}/perf-core/templates \
 	DESTDIR=$RPM_BUILD_ROOT
-%{__mv} $RPM_BUILD_ROOT%{_bindir}/perf{,-gtk}
+%{__mv} $RPM_BUILD_ROOT%{_bindir}/perf{,_gtk}
 
 %py_comp $RPM_BUILD_ROOT%{_datadir}/perf-core/scripts/python
 %py_ocomp $RPM_BUILD_ROOT%{_datadir}/perf-core/scripts/python
@@ -432,11 +432,11 @@ rm -rf $RPM_BUILD_ROOT
 
 %files perf-gtk
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_bindir}/perf-gtk
+%attr(755,root,root) %{_bindir}/perf_gtk
 
 %files perf-slang
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_bindir}/perf-slang
+%attr(755,root,root) %{_bindir}/perf_slang
 
 %files -n bash-completion-perf
 %defattr(644,root,root,755)
