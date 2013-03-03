@@ -8,7 +8,7 @@
 
 %define		rel		1
 %define		basever	3.7
-%define		postver	.5
+%define		postver	.10
 Summary:	Assortment of tools for the Linux kernel
 Summary(pl.UTF-8):	Zestaw narzędzi dla jądra Linuksa
 Name:		kernel-tools
@@ -20,7 +20,7 @@ Source0:	http://www.kernel.org/pub/linux/kernel/v3.x/linux-%{basever}.tar.xz
 # Source0-md5:	21223369d682bcf44bcdfe1521095983
 %if "%{postver}" != ".0"
 Patch0:		http://www.kernel.org/pub/linux/kernel/v3.x/patch-%{version}.bz2
-# Patch0-md5:	0bb3a5b1c5ee7ae694e3db58b2b69a8d
+# Patch0-md5:	5545033e0ce84a7f343f79530ebe94ab
 %endif
 Source1:	cpupower.service
 Source2:	cpupower.config
