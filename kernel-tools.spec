@@ -7,8 +7,8 @@
 %bcond_without	perf		# perf tools
 
 %define		rel		1
-%define		basever	3.7
-%define		postver	.10
+%define		basever	3.8
+%define		postver	.4
 Summary:	Assortment of tools for the Linux kernel
 Summary(pl.UTF-8):	Zestaw narzędzi dla jądra Linuksa
 Name:		kernel-tools
@@ -17,10 +17,10 @@ Release:	%{rel}
 License:	GPL v2
 Group:		Applications/System
 Source0:	http://www.kernel.org/pub/linux/kernel/v3.x/linux-%{basever}.tar.xz
-# Source0-md5:	21223369d682bcf44bcdfe1521095983
+# Source0-md5:	1c738edfc54e7c65faeb90c436104e2f
 %if "%{postver}" != ".0"
 Patch0:		http://www.kernel.org/pub/linux/kernel/v3.x/patch-%{version}.bz2
-# Patch0-md5:	5545033e0ce84a7f343f79530ebe94ab
+# Patch0-md5:	46326c8ccbe75d8625937fd5bc847eb5
 %endif
 Source1:	cpupower.service
 Source2:	cpupower.config
@@ -311,9 +311,9 @@ cd -
 	DESTDIR=$RPM_BUILD_ROOT
 %else
 cd tools/power/x86/turbostat
-install -p turbostat $RPM_BUILD_ROOT%{_bindir}/turbostat
 install -p turbostat.8 $RPM_BUILD_ROOT%{_mandir}/man8
 cd -
+install -p turbostat $RPM_BUILD_ROOT%{_bindir}/turbostat
 %endif
 %endif
 
@@ -353,6 +353,8 @@ PWD=${PWD:-$(pwd)}
 
 # gen_init_cpio
 install -p usr/gen_init_cpio $RPM_BUILD_ROOT%{_bindir}/gen_init_cpio
+
+rm -r $RPM_BUILD_ROOT%{_datadir}/perf-core/tests
 
 %clean
 rm -rf $RPM_BUILD_ROOT
