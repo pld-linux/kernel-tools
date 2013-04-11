@@ -8,7 +8,7 @@
 
 %define		rel		1
 %define		basever	3.8
-%define		postver	.4
+%define		postver	.6
 Summary:	Assortment of tools for the Linux kernel
 Summary(pl.UTF-8):	Zestaw narzędzi dla jądra Linuksa
 Name:		kernel-tools
@@ -20,7 +20,7 @@ Source0:	http://www.kernel.org/pub/linux/kernel/v3.x/linux-%{basever}.tar.xz
 # Source0-md5:	1c738edfc54e7c65faeb90c436104e2f
 %if "%{postver}" != ".0"
 Patch0:		http://www.kernel.org/pub/linux/kernel/v3.x/patch-%{version}.bz2
-# Patch0-md5:	46326c8ccbe75d8625937fd5bc847eb5
+# Patch0-md5:	ab255ca10073bbaab3218e024d9f8568
 %endif
 Source1:	cpupower.service
 Source2:	cpupower.config
@@ -183,7 +183,7 @@ Ten pakiet zawiera tekstowy interfejs oparty na bibliotece Slang.
 Summary:	Bash completion for perf command
 Summary(pl.UTF-8):	Bashowe uzupełnianie parametrów dla polecenia perf
 Group:		Applications/Shells
-Requires:	%{name}-perf = %{version}-%{release}
+Requires:	%{name}-perf
 Requires:	bash-completion
 
 %description -n bash-completion-perf
