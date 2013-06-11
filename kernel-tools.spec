@@ -6,7 +6,7 @@
 %bcond_without	verbose		# verbose build (V=1)
 %bcond_without	perf		# perf tools
 
-%define		rel		2
+%define		rel		3
 %define		basever	3.9
 %define		postver	.5
 Summary:	Assortment of tools for the Linux kernel
@@ -245,6 +245,7 @@ install -d $PWD/perf-{slang,gtk}
 	NO_GTK2=1 \
 	%{makeopts} \
 	CFLAGS_OPTIMIZE="%{rpmcflags}" \
+	WERROR=0 \
 	prefix=%{_prefix} \
 	perfexecdir=%{_datadir}/perf-core \
 	template_dir=%{_datadir}/perf-core/templates
@@ -254,6 +255,7 @@ install -d $PWD/perf-{slang,gtk}
 	O=$PWD/perf-gtk \
 	%{makeopts} \
 	CFLAGS_OPTIMIZE="%{rpmcflags}" \
+	WERROR=0 \
 	prefix=%{_prefix} \
 	perfexecdir=%{_datadir}/perf-core \
 	template_dir=%{_datadir}/perf-core/templates
