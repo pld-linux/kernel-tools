@@ -6,7 +6,7 @@
 %bcond_without	verbose		# verbose build (V=1)
 %bcond_without	perf		# perf tools
 
-%define		rel		3
+%define		rel		4
 %define		basever	3.9
 %define		postver	.5
 Summary:	Assortment of tools for the Linux kernel
