@@ -1,6 +1,9 @@
 # TODO:
 # - redefine: PACKAGE_BUGREPORT=cpufreq@vger.kernel.org
-# -n python-perf?
+# - add -n python-perf?
+# - without perf bcond does not work (it still builds it)
+# - add bcond to disable building docs (perf docs)
+# - install of perf compiles things over again
 
 # Conditional build:
 %bcond_without	verbose		# verbose build (V=1)
@@ -203,6 +206,9 @@ cd linux-%{basever}
 %build
 cd linux-%{basever}
 
+# Simple Disk Sleep Monitor
+%{__cc} %{rpmcppflags} %{rpmcflags} %{rpmldflags} Documentation/laptops/dslm.c -o dslm
+
 # cpupower
 %{__make} -C tools/power/cpupower \
 	%{makeopts} \
@@ -268,7 +274,9 @@ install -d $PWD/perf-{slang,gtk}
 
 %install
 rm -rf $RPM_BUILD_ROOT
+
 cd linux-%{basever}
+install -d $RPM_BUILD_ROOT%{_sbindir}
 
 %{__make} -C tools/power/cpupower install \
 	DESTDIR=$RPM_BUILD_ROOT \
@@ -290,7 +298,8 @@ install -p tools/power/cpupower/debug/i386/{centrino,powernow-k8}-decode $RPM_BU
 install -p tools/power/cpupower/debug/x86_64/{centrino,powernow-k8}-decode $RPM_BUILD_ROOT%{_bindir}
 %endif
 
-install tools/vm/slabinfo $RPM_BUILD_ROOT%{_bindir}
+install -p tools/vm/slabinfo $RPM_BUILD_ROOT%{_bindir}
+install -p dslm $RPM_BUILD_ROOT%{_sbindir}
 
 %ifarch %{ix86} %{x8664}
 install -d $RPM_BUILD_ROOT%{_mandir}/man8
@@ -302,7 +311,7 @@ install -d $RPM_BUILD_ROOT%{_mandir}/man8
 %else
 cd tools/power/x86/x86_energy_perf_policy
 install -p x86_energy_perf_policy $RPM_BUILD_ROOT%{_bindir}
-install -p x86_energy_perf_policy.8 $RPM_BUILD_ROOT%{_mandir}/man8
+cp -p x86_energy_perf_policy.8 $RPM_BUILD_ROOT%{_mandir}/man8
 cd -
 %endif
 
@@ -313,7 +322,7 @@ cd -
 	DESTDIR=$RPM_BUILD_ROOT
 %else
 cd tools/power/x86/turbostat
-install -p turbostat.8 $RPM_BUILD_ROOT%{_mandir}/man8
+cp -p turbostat.8 $RPM_BUILD_ROOT%{_mandir}/man8
 cd -
 install -p turbostat $RPM_BUILD_ROOT%{_bindir}/turbostat
 %endif
@@ -379,6 +388,7 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/gen_init_cpio
 %attr(755,root,root) %{_bindir}/slabinfo
+%attr(755,root,root) %{_sbindir}/dslm
 %ifarch %{ix86} %{x8664}
 %attr(755,root,root) %{_bindir}/centrino-decode
 %attr(755,root,root) %{_bindir}/powernow-k8-decode
