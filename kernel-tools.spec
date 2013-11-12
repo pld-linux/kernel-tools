@@ -10,9 +10,9 @@
 %bcond_without	perf		# perf tools
 %bcond_without	gtk		# gtk perf version
 
-%define		rel		4
-%define		basever	3.9
-%define		postver	.5
+%define		rel		1
+%define		basever	3.10
+%define		postver	.18
 Summary:	Assortment of tools for the Linux kernel
 Summary(pl.UTF-8):	Zestaw narzędzi dla jądra Linuksa
 Name:		kernel-tools
@@ -21,10 +21,10 @@ Release:	%{rel}
 License:	GPL v2
 Group:		Applications/System
 Source0:	http://www.kernel.org/pub/linux/kernel/v3.x/linux-%{basever}.tar.xz
-# Source0-md5:	4348c9b6b2eb3144d601e87c19d5d909
+# Source0-md5:	4f25cd5bec5f8d5a7d935b3f2ccb8481
 %if "%{postver}" != ".0"
 Patch0:		http://www.kernel.org/pub/linux/kernel/v3.x/patch-%{version}.xz
-# Patch0-md5:	aa22187ae5cd482a69097e9e59244491
+# Patch0-md5:	e39b75595bf61d758087e1ddecd01a12
 %endif
 Source1:	cpupower.service
 Source2:	cpupower.config
@@ -238,10 +238,10 @@ cd linux-%{basever}
 	CFLAGS="%{rpmcflags} -Wall -I../../../../arch/x86/include/uapi/"
 %endif
 
-# slabinfo
-%{__make} -C tools/vm \
+# page-types, slabinfo
+%{__make} -C tools/vm page-types slabinfo \
 	CC="%{__cc}" \
-	CFLAGS="%{rpmcflags} -Wall -Wextra"
+	CFLAGS="%{rpmcflags} -Wall -Wextra -I../lib"
 
 %if %{with perf}
 # perf slang version
@@ -302,6 +302,7 @@ install -p tools/power/cpupower/debug/x86_64/{centrino,powernow-k8}-decode $RPM_
 %endif
 
 install -p tools/vm/slabinfo $RPM_BUILD_ROOT%{_bindir}
+install -p tools/vm/page-types $RPM_BUILD_ROOT%{_sbindir}
 install -p dslm $RPM_BUILD_ROOT%{_sbindir}
 
 %ifarch %{ix86} %{x8664}
@@ -394,6 +395,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/gen_init_cpio
 %attr(755,root,root) %{_bindir}/slabinfo
 %attr(755,root,root) %{_sbindir}/dslm
+%attr(755,root,root) %{_sbindir}/page-types
 %ifarch %{ix86} %{x8664}
 %attr(755,root,root) %{_bindir}/centrino-decode
 %attr(755,root,root) %{_bindir}/powernow-k8-decode
