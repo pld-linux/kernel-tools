@@ -8,6 +8,7 @@
 # Conditional build:
 %bcond_without	verbose		# verbose build (V=1)
 %bcond_without	perf		# perf tools
+%bcond_without	gtk		# gtk perf version
 
 %define		rel		4
 %define		basever	3.9
@@ -39,7 +40,7 @@ BuildRequires:	bison
 BuildRequires:	docbook-style-xsl
 BuildRequires:	elfutils-devel
 BuildRequires:	flex
-BuildRequires:	gtk+2-devel >= 2.0
+%{?with_gtk:BuildRequires:	gtk+2-devel >= 2.0}
 BuildRequires:	libunwind-devel >= 0.99
 BuildRequires:	newt-devel
 BuildRequires:	perl-devel >= 5.1
@@ -256,6 +257,7 @@ install -d $PWD/perf-{slang,gtk}
 	perfexecdir=%{_datadir}/perf-core \
 	template_dir=%{_datadir}/perf-core/templates
 
+%if %{with gtk}
 # perf gtk version
 %{__make} -C tools/perf all man \
 	O=$PWD/perf-gtk \
@@ -265,6 +267,7 @@ install -d $PWD/perf-{slang,gtk}
 	prefix=%{_prefix} \
 	perfexecdir=%{_datadir}/perf-core \
 	template_dir=%{_datadir}/perf-core/templates
+%endif
 %endif
 
 # gen_init_cpio
@@ -346,6 +349,7 @@ PWD=${PWD:-$(pwd)}
 	DESTDIR=$RPM_BUILD_ROOT
 %{__mv} $RPM_BUILD_ROOT%{_bindir}/perf{,_slang}
 
+%if %{with gtk}
 # perf gtk
 %{__make} -j1 install install-man \
 	-C tools/perf \
@@ -359,6 +363,7 @@ PWD=${PWD:-$(pwd)}
 	template_dir=%{_datadir}/perf-core/templates \
 	DESTDIR=$RPM_BUILD_ROOT
 %{__mv} $RPM_BUILD_ROOT%{_bindir}/perf{,_gtk}
+%endif
 
 %py_comp $RPM_BUILD_ROOT%{_datadir}/perf-core/scripts/python
 %py_ocomp $RPM_BUILD_ROOT%{_datadir}/perf-core/scripts/python
@@ -446,9 +451,11 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_datadir}/perf-core/scripts/python/bin/*
 %{_datadir}/perf-core/scripts/python/*.py*
 
+%if %{with gtk}
 %files perf-gtk
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/perf_gtk
+%endif
 
 %files perf-slang
 %defattr(644,root,root,755)
