@@ -30,6 +30,7 @@ Source1:	cpupower.service
 Source2:	cpupower.config
 URL:		http://www.kernel.org/
 BuildRequires:	rpmbuild(macros) >= 1.647
+BuildRequires:	pciutils-devel
 BuildRequires:	tar >= 1:1.22
 BuildRequires:	xz
 %if %{with perf}
