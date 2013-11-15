@@ -29,10 +29,9 @@ Patch0:		http://www.kernel.org/pub/linux/kernel/v3.x/patch-%{version}.xz
 Source1:	cpupower.service
 Source2:	cpupower.config
 URL:		http://www.kernel.org/
-BuildRequires:	docbook-dtd45-xml
 BuildRequires:	gettext-tools
-BuildRequires:	rpmbuild(macros) >= 1.647
 BuildRequires:	pciutils-devel
+BuildRequires:	rpmbuild(macros) >= 1.647
 BuildRequires:	tar >= 1:1.22
 BuildRequires:	xz
 %if %{with perf}
@@ -40,18 +39,20 @@ BuildRequires:	asciidoc
 BuildRequires:	audit-libs-devel
 BuildRequires:	binutils-devel
 BuildRequires:	bison
+BuildRequires:	docbook-dtd45-xml
 BuildRequires:	docbook-style-xsl
 BuildRequires:	elfutils-devel
 BuildRequires:	flex
-%{?with_gtk:BuildRequires:	gtk+2-devel >= 2.0}
 BuildRequires:	libunwind-devel >= 0.99
-BuildRequires:	newt-devel
 BuildRequires:	perl-devel >= 5.1
-BuildRequires:	pkgconfig
 BuildRequires:	python-devel
 BuildRequires:	rpm-pythonprov
 BuildRequires:	slang-devel
 BuildRequires:	xmlto
+%if %{with gtk}
+BuildRequires:	gtk+2-devel >= 2.0
+BuildRequires:	pkgconfig
+%endif
 %endif
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -371,12 +372,12 @@ PWD=${PWD:-$(pwd)}
 
 %py_comp $RPM_BUILD_ROOT%{_datadir}/perf-core/scripts/python
 %py_ocomp $RPM_BUILD_ROOT%{_datadir}/perf-core/scripts/python
+
+rm -r $RPM_BUILD_ROOT%{_datadir}/perf-core/tests
 %endif
 
 # gen_init_cpio
 install -p usr/gen_init_cpio $RPM_BUILD_ROOT%{_bindir}/gen_init_cpio
-
-rm -r $RPM_BUILD_ROOT%{_datadir}/perf-core/tests
 
 %clean
 rm -rf $RPM_BUILD_ROOT
