@@ -24,7 +24,7 @@ Source0:	http://www.kernel.org/pub/linux/kernel/v3.x/linux-%{basever}.tar.xz
 # Source0-md5:	4f25cd5bec5f8d5a7d935b3f2ccb8481
 %if "%{postver}" != ".0"
 Patch0:		http://www.kernel.org/pub/linux/kernel/v3.x/patch-%{version}.xz
-# Patch0-md5:	e39b75595bf61d758087e1ddecd01a12
+# Patch0-md5:	b7f932eecbbf5636ad69add480fa1573
 %endif
 Source1:	cpupower.service
 Source2:	cpupower.config
