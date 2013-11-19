@@ -12,7 +12,7 @@
 
 %define		rel		1
 %define		basever	3.10
-%define		postver	.18
+%define		postver	.19
 Summary:	Assortment of tools for the Linux kernel
 Summary(pl.UTF-8):	Zestaw narzędzi dla jądra Linuksa
 Name:		kernel-tools
