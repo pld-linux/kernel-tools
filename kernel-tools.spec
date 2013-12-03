@@ -11,8 +11,8 @@
 %bcond_without	gtk		# gtk perf version
 
 %define		rel		1
-%define		basever	3.10
-%define		postver	.19
+%define		basever		3.10
+%define		postver		.21
 Summary:	Assortment of tools for the Linux kernel
 Summary(pl.UTF-8):	Zestaw narzędzi dla jądra Linuksa
 Name:		kernel-tools
@@ -24,7 +24,7 @@ Source0:	http://www.kernel.org/pub/linux/kernel/v3.x/linux-%{basever}.tar.xz
 # Source0-md5:	4f25cd5bec5f8d5a7d935b3f2ccb8481
 %if "%{postver}" != ".0"
 Patch0:		http://www.kernel.org/pub/linux/kernel/v3.x/patch-%{version}.xz
-# Patch0-md5:	b7f932eecbbf5636ad69add480fa1573
+# Patch0-md5:	0d7fd255ad4357b2fde3747163ef8bad
 %endif
 Source1:	cpupower.service
 Source2:	cpupower.config
