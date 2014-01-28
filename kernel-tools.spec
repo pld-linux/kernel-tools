@@ -10,7 +10,7 @@
 %bcond_without	perf		# perf tools
 %bcond_without	gtk		# gtk perf version
 
-%define		rel		1
+%define		rel		2
 %define		basever		3.10
 %define		postver		.27
 Summary:	Assortment of tools for the Linux kernel
