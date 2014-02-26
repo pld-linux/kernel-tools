@@ -10,7 +10,7 @@
 %bcond_without	perf		# perf tools
 %bcond_without	gtk		# gtk perf version
 
-%define		rel		2
+%define		rel		3
 %define		basever		3.10
 %define		postver		.27
 Summary:	Assortment of tools for the Linux kernel
@@ -28,6 +28,7 @@ Patch0:		http://www.kernel.org/pub/linux/kernel/v3.x/patch-%{version}.xz
 %endif
 Source1:	cpupower.service
 Source2:	cpupower.config
+Source3:	perf
 URL:		http://www.kernel.org/
 BuildRequires:	gettext-tools
 BuildRequires:	pciutils-devel
@@ -374,6 +375,8 @@ PWD=${PWD:-$(pwd)}
 %py_ocomp $RPM_BUILD_ROOT%{_datadir}/perf-core/scripts/python
 
 rm -r $RPM_BUILD_ROOT%{_datadir}/perf-core/tests
+
+install %{SOURCE3} $RPM_BUILD_ROOT%{_bindir}/perf
 %endif
 
 # gen_init_cpio
@@ -431,6 +434,7 @@ rm -rf $RPM_BUILD_ROOT
 %if %{with perf}
 %files perf-core
 %defattr(644,root,root,755)
+%attr(755,root,root) %{_bindir}/perf
 %{_mandir}/man1/perf*.1*
 %dir %{_datadir}/perf-core
 %attr(755,root,root) %{_datadir}/perf-core/perf-archive
