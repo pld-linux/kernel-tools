@@ -121,6 +121,7 @@ Pliki programistyczne biblioteki cpupower.
 %package perf-core
 Summary:	perf profiler tool (core package)
 Summary(pl.UTF-8):	Narzędzie profilujące perf (podstawowe narzędzia)
+Suggests:	binutils
 Group:		Applications/System
 
 %description perf-core
