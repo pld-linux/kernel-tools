@@ -28,7 +28,7 @@ Patch0:		http://www.kernel.org/pub/linux/kernel/v3.x/patch-%{version}.xz
 %endif
 Source1:	cpupower.service
 Source2:	cpupower.config
-Source3:	perf
+Source3:	perf.sh
 URL:		http://www.kernel.org/
 BuildRequires:	gettext-tools
 BuildRequires:	pciutils-devel
@@ -377,7 +377,7 @@ PWD=${PWD:-$(pwd)}
 
 rm -r $RPM_BUILD_ROOT%{_datadir}/perf-core/tests
 
-install %{SOURCE3} $RPM_BUILD_ROOT%{_bindir}/perf
+install -p %{SOURCE3} $RPM_BUILD_ROOT%{_bindir}/perf
 %endif
 
 # gen_init_cpio
