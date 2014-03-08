@@ -10,21 +10,20 @@
 %bcond_without	perf		# perf tools
 %bcond_without	gtk		# gtk perf version
 
-%define		rel		3
 %define		basever		3.10
-%define		postver		.27
+%define		postver		.33
 Summary:	Assortment of tools for the Linux kernel
 Summary(pl.UTF-8):	Zestaw narzędzi dla jądra Linuksa
 Name:		kernel-tools
 Version:	%{basever}%{postver}
-Release:	%{rel}
+Release:	1
 License:	GPL v2
 Group:		Applications/System
-Source0:	http://www.kernel.org/pub/linux/kernel/v3.x/linux-%{basever}.tar.xz
+Source0:	https://www.kernel.org/pub/linux/kernel/v3.x/linux-%{basever}.tar.xz
 # Source0-md5:	4f25cd5bec5f8d5a7d935b3f2ccb8481
 %if "%{postver}" != ".0"
-Patch0:		http://www.kernel.org/pub/linux/kernel/v3.x/patch-%{version}.xz
-# Patch0-md5:	58009825fb7ca7ca7913ab68fbf8a8a7
+Patch0:		https://www.kernel.org/pub/linux/kernel/v3.x/patch-%{version}.xz
+# Patch0-md5:	2a453acf41c3f28122a7cabd3d4acbf5
 %endif
 Source1:	cpupower.service
 Source2:	cpupower.config
@@ -239,9 +238,9 @@ cd linux-%{basever}
 %{__make} -C tools/power/x86/x86_energy_perf_policy \
 	CC="%{__cc}" \
 	CFLAGS="%{rpmcflags}"
+CFLAGS="%{rpmcflags}" \
 %{__make} -C tools/power/x86/turbostat \
-	CC="%{__cc}" \
-	CFLAGS="%{rpmcflags} -Wall -I../../../../arch/x86/include/uapi/"
+	CC="%{__cc}"
 %endif
 
 # page-types, slabinfo
@@ -375,7 +374,7 @@ PWD=${PWD:-$(pwd)}
 %py_comp $RPM_BUILD_ROOT%{_datadir}/perf-core/scripts/python
 %py_ocomp $RPM_BUILD_ROOT%{_datadir}/perf-core/scripts/python
 
-rm -r $RPM_BUILD_ROOT%{_datadir}/perf-core/tests
+%{__rm} -r $RPM_BUILD_ROOT%{_datadir}/perf-core/tests
 
 install -p %{SOURCE3} $RPM_BUILD_ROOT%{_bindir}/perf
 %endif
