@@ -194,6 +194,9 @@ Summary(pl.UTF-8):	Bashowe uzupełnianie parametrów dla polecenia perf
 Group:		Applications/Shells
 Requires:	%{name}-perf
 Requires:	bash-completion
+%if "%{_rpmversion}" >= "5"
+BuildArch:	noarch
+%endif
 
 %description -n bash-completion-perf
 Bash completion for perf command.
