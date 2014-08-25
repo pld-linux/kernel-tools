@@ -10,8 +10,8 @@
 %bcond_without	perf		# perf tools
 %bcond_without	gtk		# gtk perf version
 
-%define		basever		3.10
-%define		postver		.33
+%define		basever		3.16
+%define		postver		.1
 Summary:	Assortment of tools for the Linux kernel
 Summary(pl.UTF-8):	Zestaw narzędzi dla jądra Linuksa
 Name:		kernel-tools
@@ -20,10 +20,10 @@ Release:	1
 License:	GPL v2
 Group:		Applications/System
 Source0:	https://www.kernel.org/pub/linux/kernel/v3.x/linux-%{basever}.tar.xz
-# Source0-md5:	4f25cd5bec5f8d5a7d935b3f2ccb8481
+# Source0-md5:	5c569ed649a0c9711879f333e90c5386
 %if "%{postver}" != ".0"
 Patch0:		https://www.kernel.org/pub/linux/kernel/v3.x/patch-%{version}.xz
-# Patch0-md5:	2a453acf41c3f28122a7cabd3d4acbf5
+# Patch0-md5:	9da4b0f5e343455b8141bcfa47e88cf5
 %endif
 Source1:	cpupower.service
 Source2:	cpupower.config
@@ -55,6 +55,9 @@ BuildRequires:	pkgconfig
 %endif
 %endif
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
+
+# otherwise /usr/lib/rpm/bin/debugedit: canonicalization unexpectedly shrank by one character
+%define		_enable_debug_packages	0
 
 %define		makeopts	CC="%{__cc}" %{?with_verbose:V=1}
 
@@ -211,6 +214,8 @@ cd linux-%{basever}
 %if "%{postver}" != ".0"
 %patch0 -p1
 %endif
+
+sed -i -e 's#libexec/perf-core#%{_datadir}/perf-core#g' tools/perf/config/Makefile
 
 %build
 cd linux-%{basever}
@@ -463,6 +468,10 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{_datadir}/perf-core/scripts/python/bin
 %attr(755,root,root) %{_datadir}/perf-core/scripts/python/bin/*
 %{_datadir}/perf-core/scripts/python/*.py*
+
+%dir %{_libdir}/traceevent
+%dir %{_libdir}/traceevent/plugins
+%attr(755,root,root) %{_libdir}/traceevent/plugins/plugin_*.so
 
 %if %{with gtk}
 %files perf-gtk
