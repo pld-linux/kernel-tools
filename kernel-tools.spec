@@ -8,7 +8,7 @@
 # Conditional build:
 %bcond_without	verbose		# verbose build (V=1)
 %bcond_without	perf		# perf tools
-%bcond_without	gtk		# gtk perf version
+%bcond_without	gtk		# GTK+ 2.x perf support
 
 %define		basever		3.16
 %define		postver		.1
@@ -27,7 +27,6 @@ Patch0:		https://www.kernel.org/pub/linux/kernel/v3.x/patch-%{version}.xz
 %endif
 Source1:	cpupower.service
 Source2:	cpupower.config
-Source3:	perf.sh
 URL:		http://www.kernel.org/
 BuildRequires:	gettext-tools
 BuildRequires:	pciutils-devel
@@ -43,6 +42,7 @@ BuildRequires:	docbook-dtd45-xml
 BuildRequires:	docbook-style-xsl
 BuildRequires:	elfutils-devel
 BuildRequires:	flex
+BuildRequires:	libnuma-devel
 BuildRequires:	libunwind-devel >= 0.99
 BuildRequires:	perl-devel >= 5.1
 BuildRequires:	python-devel
@@ -120,32 +120,35 @@ Development files for the cpupower library.
 %description cpupower-libs-devel -l pl.UTF-8
 Pliki programistyczne biblioteki cpupower.
 
-%package perf-core
-Summary:	perf profiler tool (core package)
-Summary(pl.UTF-8):	Narzędzie profilujące perf (podstawowe narzędzia)
+%package perf
+Summary:	perf profiler tool
+Summary(pl.UTF-8):	Narzędzie profilujące perf
 Group:		Applications/System
 Suggests:	binutils
+Obsoletes:	perf-core
+Obsoletes:	perf-slang
 
-%description perf-core
+%description perf
 Perf is a profiler tool for Linux 2.6+ based systems that abstracts
 away CPU hardware differences in Linux performance measurements and
 presents a simple commandline interface. Perf is based on the
 perf_events interface exported by recent versions of the Linux kernel.
 
-This package contains core files and scripts.
+This package contains core files, scripts and text interface (TUI).
 
-%description perf-core -l pl.UTF-8
+%description perf -l pl.UTF-8
 Perf to narzędzie profilujące dla systemów opartych na Linuksie 2.6+,
 odseparowujące od różnic sprzętowych między pomiarami wydajności w
 zależności od procesora oraz udostępniające prosty interfejs linii
 poleceń. Perf jest oparty na interfejsie perf_events eksportowanym
 przez nowe wersje jądra Linuksa.
 
-Ten pakiet zawiera podstawowe pliki i skrypty.
+Ten pakiet zawiera podstawowe pliki, skrypty oraz interfejs tekstowy
+(TUI).
 
 %package perf-gtk
-Summary:	perf profiler tool (GTK+ GUI)
-Summary(pl.UTF-8):	Narzędzie profilujące perf (interfejs graficzny GTK+)
+Summary:	perf profiler tool (GTK+ 2 GUI)
+Summary(pl.UTF-8):	Narzędzie profilujące perf (interfejs graficzny GTK+ 2)
 Group:		X11/Applications
 Requires:	%{name}-perf-core = %{version}-%{release}
 Provides:	%{name}-perf = %{version}-%{release}
@@ -156,7 +159,7 @@ away CPU hardware differences in Linux performance measurements and
 presents a simple commandline interface. Perf is based on the
 perf_events interface exported by recent versions of the Linux kernel.
 
-This package contains GTK+ based GUI.
+This package contains GTK+ 2 based GUI.
 
 %description perf-gtk -l pl.UTF-8
 Perf to narzędzie profilujące dla systemów opartych na Linuksie 2.6+,
@@ -165,7 +168,7 @@ zależności od procesora oraz udostępniające prosty interfejs linii
 poleceń. Perf jest oparty na interfejsie perf_events eksportowanym
 przez nowe wersje jądra Linuksa.
 
-Ten pakiet zawiera graficzny interfejs oparty na GTK+.
+Ten pakiet zawiera graficzny interfejs oparty na GTK+ 2.
 
 %package perf-slang
 Summary:	perf profiler tool (Slang TUI)
@@ -257,30 +260,14 @@ CFLAGS="%{rpmcflags}" \
 	CFLAGS="%{rpmcflags} -Wall -Wextra -I../lib"
 
 %if %{with perf}
-# perf slang version
-PWD=${PWD:-$(pwd)}
-install -d $PWD/perf-{slang,gtk}
 %{__make} -C tools/perf all man \
-	O=$PWD/perf-slang \
-	NO_GTK2=1 \
+	%{!?with_gtk:NO_GTK2=1} \
 	%{makeopts} \
 	CFLAGS_OPTIMIZE="%{rpmcflags}" \
 	WERROR=0 \
 	prefix=%{_prefix} \
 	perfexecdir=%{_datadir}/perf-core \
 	template_dir=%{_datadir}/perf-core/templates
-
-%if %{with gtk}
-# perf gtk version
-%{__make} -C tools/perf all man \
-	O=$PWD/perf-gtk \
-	%{makeopts} \
-	CFLAGS_OPTIMIZE="%{rpmcflags}" \
-	WERROR=0 \
-	prefix=%{_prefix} \
-	perfexecdir=%{_datadir}/perf-core \
-	template_dir=%{_datadir}/perf-core/templates
-%endif
 %endif
 
 # gen_init_cpio
@@ -346,13 +333,9 @@ install -p turbostat $RPM_BUILD_ROOT%{_bindir}/turbostat
 %endif
 
 %if %{with perf}
-# perf slang
-PWD=${PWD:-$(pwd)}
-# perf slang version
 %{__make} -j1 install install-man \
 	-C tools/perf \
-	O=$PWD/perf-slang \
-	NO_GTK2=1 \
+	%{!?with_gtk:NO_GTK2=1} \
 	CC="%{__cc}" \
 	CFLAGS_OPTIMIZE="%{rpmcflags}" \
 	WERROR=0 \
@@ -361,30 +344,11 @@ PWD=${PWD:-$(pwd)}
 	perfexecdir=%{_datadir}/perf-core \
 	template_dir=%{_datadir}/perf-core/templates \
 	DESTDIR=$RPM_BUILD_ROOT
-%{__mv} $RPM_BUILD_ROOT%{_bindir}/perf{,_slang}
-
-%if %{with gtk}
-# perf gtk
-%{__make} -j1 install install-man \
-	-C tools/perf \
-	O=$PWD/perf-gtk \
-	CC="%{__cc}" \
-	CFLAGS_OPTIMIZE="%{rpmcflags}" \
-	WERROR=0 \
-	%{?with_verbose:V=1} \
-	prefix=%{_prefix} \
-	perfexecdir=%{_datadir}/perf-core \
-	template_dir=%{_datadir}/perf-core/templates \
-	DESTDIR=$RPM_BUILD_ROOT
-%{__mv} $RPM_BUILD_ROOT%{_bindir}/perf{,_gtk}
-%endif
 
 %py_comp $RPM_BUILD_ROOT%{_datadir}/perf-core/scripts/python
 %py_ocomp $RPM_BUILD_ROOT%{_datadir}/perf-core/scripts/python
 
 %{__rm} -r $RPM_BUILD_ROOT%{_datadir}/perf-core/tests
-
-install -p %{SOURCE3} $RPM_BUILD_ROOT%{_bindir}/perf
 %endif
 
 # gen_init_cpio
@@ -440,9 +404,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/cpufreq.h
 
 %if %{with perf}
-%files perf-core
+%files perf
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/perf
+%attr(755,root,root) %{_bindir}/trace
 %{_mandir}/man1/perf*.1*
 %dir %{_datadir}/perf-core
 %attr(755,root,root) %{_datadir}/perf-core/perf-archive
@@ -476,12 +441,8 @@ rm -rf $RPM_BUILD_ROOT
 %if %{with gtk}
 %files perf-gtk
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_bindir}/perf_gtk
+%attr(755,root,root) %{_libdir}/libperf-gtk.so
 %endif
-
-%files perf-slang
-%defattr(644,root,root,755)
-%attr(755,root,root) %{_bindir}/perf_slang
 
 %files -n bash-completion-perf
 %defattr(644,root,root,755)
