@@ -42,8 +42,8 @@ BuildRequires:	docbook-dtd45-xml
 BuildRequires:	docbook-style-xsl
 BuildRequires:	elfutils-devel
 BuildRequires:	flex
-#BuildRequires:	libnuma-devel
 BuildRequires:	libunwind-devel >= 0.99
+BuildRequires:	numactl-devel
 BuildRequires:	perl-devel >= 5.1
 BuildRequires:	python-devel
 BuildRequires:	rpm-pythonprov
