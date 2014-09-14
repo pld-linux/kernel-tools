@@ -11,7 +11,7 @@
 %bcond_without	gtk		# GTK+ 2.x perf support
 
 %define		basever		3.16
-%define		postver		.1
+%define		postver		.2
 Summary:	Assortment of tools for the Linux kernel
 Summary(pl.UTF-8):	Zestaw narzędzi dla jądra Linuksa
 Name:		kernel-tools
@@ -23,7 +23,7 @@ Source0:	https://www.kernel.org/pub/linux/kernel/v3.x/linux-%{basever}.tar.xz
 # Source0-md5:	5c569ed649a0c9711879f333e90c5386
 %if "%{postver}" != ".0"
 Patch0:		https://www.kernel.org/pub/linux/kernel/v3.x/patch-%{version}.xz
-# Patch0-md5:	9da4b0f5e343455b8141bcfa47e88cf5
+# Patch0-md5:	926e6e2ee0634ce53730701da749b040
 %endif
 Source1:	cpupower.service
 Source2:	cpupower.config
@@ -42,7 +42,7 @@ BuildRequires:	docbook-dtd45-xml
 BuildRequires:	docbook-style-xsl
 BuildRequires:	elfutils-devel
 BuildRequires:	flex
-BuildRequires:	libnuma-devel
+#BuildRequires:	libnuma-devel
 BuildRequires:	libunwind-devel >= 0.99
 BuildRequires:	perl-devel >= 5.1
 BuildRequires:	python-devel
