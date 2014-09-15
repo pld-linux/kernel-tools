@@ -16,7 +16,7 @@ Summary:	Assortment of tools for the Linux kernel
 Summary(pl.UTF-8):	Zestaw narzędzi dla jądra Linuksa
 Name:		kernel-tools
 Version:	%{basever}%{postver}
-Release:	1
+Release:	2
 License:	GPL v2
 Group:		Applications/System
 Source0:	https://www.kernel.org/pub/linux/kernel/v3.x/linux-%{basever}.tar.xz
@@ -150,8 +150,7 @@ Ten pakiet zawiera podstawowe pliki, skrypty oraz interfejs tekstowy
 Summary:	perf profiler tool (GTK+ 2 GUI)
 Summary(pl.UTF-8):	Narzędzie profilujące perf (interfejs graficzny GTK+ 2)
 Group:		X11/Applications
-Requires:	%{name}-perf-core = %{version}-%{release}
-Provides:	%{name}-perf = %{version}-%{release}
+Requires:	%{name}-perf = %{version}-%{release}
 
 %description perf-gtk
 Perf is a profiler tool for Linux 2.6+ based systems that abstracts
@@ -169,30 +168,6 @@ poleceń. Perf jest oparty na interfejsie perf_events eksportowanym
 przez nowe wersje jądra Linuksa.
 
 Ten pakiet zawiera graficzny interfejs oparty na GTK+ 2.
-
-%package perf-slang
-Summary:	perf profiler tool (Slang TUI)
-Summary(pl.UTF-8):	Narzędzie profilujące perf (interfejs tekstowy Slang)
-Group:		X11/Applications
-Requires:	%{name}-perf-core = %{version}-%{release}
-Provides:	%{name}-perf = %{version}-%{release}
-
-%description perf-slang
-Perf is a profiler tool for Linux 2.6+ based systems that abstracts
-away CPU hardware differences in Linux performance measurements and
-presents a simple commandline interface. Perf is based on the
-perf_events interface exported by recent versions of the Linux kernel.
-
-This package contains Slang based TUI.
-
-%description perf-slang -l pl.UTF-8
-Perf to narzędzie profilujące dla systemów opartych na Linuksie 2.6+,
-odseparowujące od różnic sprzętowych między pomiarami wydajności w
-zależności od procesora oraz udostępniające prosty interfejs linii
-poleceń. Perf jest oparty na interfejsie perf_events eksportowanym
-przez nowe wersje jądra Linuksa.
-
-Ten pakiet zawiera tekstowy interfejs oparty na bibliotece Slang.
 
 %package -n bash-completion-perf
 Summary:	Bash completion for perf command
