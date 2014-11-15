@@ -10,20 +10,20 @@
 %bcond_without	perf		# perf tools
 %bcond_without	gtk		# GTK+ 2.x perf support
 
-%define		basever		3.16
-%define		postver		.2
+%define		basever		3.17
+%define		postver		.3
 Summary:	Assortment of tools for the Linux kernel
 Summary(pl.UTF-8):	Zestaw narzędzi dla jądra Linuksa
 Name:		kernel-tools
 Version:	%{basever}%{postver}
-Release:	2
+Release:	1
 License:	GPL v2
 Group:		Applications/System
 Source0:	https://www.kernel.org/pub/linux/kernel/v3.x/linux-%{basever}.tar.xz
-# Source0-md5:	5c569ed649a0c9711879f333e90c5386
+# Source0-md5:	fb30d0f29214d75cddd2faa94f73d5cf
 %if "%{postver}" != ".0"
 Patch0:		https://www.kernel.org/pub/linux/kernel/v3.x/patch-%{version}.xz
-# Patch0-md5:	926e6e2ee0634ce53730701da749b040
+# Patch0-md5:	13f495e3ce72ed6ccefb38591587a6ef
 %endif
 Source1:	cpupower.service
 Source2:	cpupower.config
