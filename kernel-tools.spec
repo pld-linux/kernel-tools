@@ -9,6 +9,11 @@
 %bcond_without	verbose		# verbose build (V=1)
 %bcond_without	perf		# perf tools
 %bcond_without	gtk		# GTK+ 2.x perf support
+%bcond_without	libunwind	# libunwind perf support
+
+%ifarch x32
+%undefine	with_libunwind
+%endif
 
 %define		basever		3.19
 %define		postver		.3
@@ -16,7 +21,7 @@ Summary:	Assortment of tools for the Linux kernel
 Summary(pl.UTF-8):	Zestaw narzędzi dla jądra Linuksa
 Name:		kernel-tools
 Version:	%{basever}%{postver}
-Release:	1
+Release:	2
 License:	GPL v2
 Group:		Applications/System
 Source0:	https://www.kernel.org/pub/linux/kernel/v3.x/linux-%{basever}.tar.xz
@@ -42,7 +47,7 @@ BuildRequires:	docbook-dtd45-xml
 BuildRequires:	docbook-style-xsl
 BuildRequires:	elfutils-devel
 BuildRequires:	flex
-BuildRequires:	libunwind-devel >= 0.99
+%{?with_libunwind:BuildRequires:	libunwind-devel >= 0.99}
 BuildRequires:	numactl-devel
 BuildRequires:	perl-devel >= 5.1
 BuildRequires:	python-devel
@@ -237,6 +242,7 @@ CFLAGS="%{rpmcflags}" \
 %if %{with perf}
 %{__make} -C tools/perf all man \
 	%{!?with_gtk:NO_GTK2=1} \
+	%{!?with_libunwind:NO_LIBUNWIND=1} \
 	%{makeopts} \
 	CFLAGS_OPTIMIZE="%{rpmcflags}" \
 	WERROR=0 \
@@ -312,6 +318,7 @@ install -p turbostat $RPM_BUILD_ROOT%{_bindir}/turbostat
 %{__make} -j1 install install-man \
 	-C tools/perf \
 	%{!?with_gtk:NO_GTK2=1} \
+	%{!?with_libunwind:NO_LIBUNWIND=1} \
 	CC="%{__cc}" \
 	CFLAGS_OPTIMIZE="%{rpmcflags}" \
 	WERROR=0 \
