@@ -247,6 +247,9 @@ CFLAGS="%{rpmcflags}" \
 
 %if %{with perf}
 %{__make} -C tools/perf all man \
+%ifarch %{x8664}
+	IS_X86_64=1 \
+%endif
 	%{!?with_gtk:NO_GTK2=1} \
 	%{!?with_libunwind:NO_LIBUNWIND=1} \
 	%{makeopts} \
@@ -323,6 +326,9 @@ install -p turbostat $RPM_BUILD_ROOT%{_bindir}/turbostat
 %if %{with perf}
 %{__make} -j1 install install-man \
 	-C tools/perf \
+%ifarch %{x8664}
+	IS_X86_64=1 \
+%endif
 	%{!?with_gtk:NO_GTK2=1} \
 	%{!?with_libunwind:NO_LIBUNWIND=1} \
 	CC="%{__cc}" \
