@@ -10,7 +10,7 @@
 %bcond_without	perf		# perf tools
 %bcond_without	gtk		# GTK+ 2.x perf support
 
-%define		basever		3.17
+%define		basever		3.19
 %define		postver		.3
 Summary:	Assortment of tools for the Linux kernel
 Summary(pl.UTF-8):	Zestaw narzędzi dla jądra Linuksa
@@ -20,10 +20,10 @@ Release:	1
 License:	GPL v2
 Group:		Applications/System
 Source0:	https://www.kernel.org/pub/linux/kernel/v3.x/linux-%{basever}.tar.xz
-# Source0-md5:	fb30d0f29214d75cddd2faa94f73d5cf
+# Source0-md5:	d3fc8316d4d4d04b65cbc2d70799e763
 %if "%{postver}" != ".0"
 Patch0:		https://www.kernel.org/pub/linux/kernel/v3.x/patch-%{version}.xz
-# Patch0-md5:	13f495e3ce72ed6ccefb38591587a6ef
+# Patch0-md5:	1fec75551b2f55fced43df8394b1fd9a
 %endif
 Source1:	cpupower.service
 Source2:	cpupower.config
@@ -242,6 +242,7 @@ CFLAGS="%{rpmcflags}" \
 	WERROR=0 \
 	prefix=%{_prefix} \
 	perfexecdir=%{_datadir}/perf-core \
+	lib=%{_lib} \
 	template_dir=%{_datadir}/perf-core/templates
 %endif
 
@@ -318,6 +319,7 @@ install -p turbostat $RPM_BUILD_ROOT%{_bindir}/turbostat
 	prefix=%{_prefix} \
 	perfexecdir=%{_datadir}/perf-core \
 	template_dir=%{_datadir}/perf-core/templates \
+	lib=%{_lib} \
 	DESTDIR=$RPM_BUILD_ROOT
 
 %py_comp $RPM_BUILD_ROOT%{_datadir}/perf-core/scripts/python
@@ -382,10 +384,12 @@ rm -rf $RPM_BUILD_ROOT
 %files perf
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/perf
+%attr(755,root,root) %{_bindir}/perf-read-vdso32
 %attr(755,root,root) %{_bindir}/trace
 %{_mandir}/man1/perf*.1*
 %dir %{_datadir}/perf-core
 %attr(755,root,root) %{_datadir}/perf-core/perf-archive
+%attr(755,root,root) %{_datadir}/perf-core/perf-with-kcore
 
 %dir %{_datadir}/perf-core/scripts
 
