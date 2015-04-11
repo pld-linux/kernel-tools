@@ -35,7 +35,7 @@ Patch0:		https://www.kernel.org/pub/linux/kernel/v3.x/patch-%{version}.xz
 Patch1:		x32.patch
 URL:		http://www.kernel.org/
 %ifarch %{x8664}
-BuildRequries:	gcc-multilib-x32
+BuildRequires:	gcc-multilib-x32
 %endif
 BuildRequires:	gettext-tools
 BuildRequires:	pciutils-devel
