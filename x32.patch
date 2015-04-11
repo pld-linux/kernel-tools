@@ -1,0 +1,154 @@
+--- linux-3.19/tools/perf/config/Makefile.arch~	2015-02-09 03:54:22.000000000 +0100
++++ linux-3.19/tools/perf/config/Makefile.arch	2015-04-11 12:17:45.107911011 +0200
+@@ -24,8 +24,14 @@
+ ARCH ?= $(RAW_ARCH)
+ 
+ LP64 := $(shell echo __LP64__ | ${CC} ${CFLAGS} -E -x c - | tail -n 1)
++ILP32 := $(shell echo __ILP32__ | ${CC} ${CFLAGS} -E -x c - | tail -n 1)
+ ifeq ($(LP64), 1)
+   IS_64_BIT := 1
+ else
+   IS_64_BIT := 0
+ endif
++ifeq ($(ILP32), 1)
++  IS_X32_BIT := 1
++else
++  IS_X32_BIT := 0
++endif
+--- linux-3.19/tools/perf/config/Makefile~	2015-04-11 12:12:31.000000000 +0200
++++ linux-3.19/tools/perf/config/Makefile	2015-04-11 12:19:05.011244885 +0200
+@@ -28,6 +28,9 @@
+     LIBUNWIND_LIBS = -lunwind -lunwind-x86
+   endif
+   NO_PERF_REGS := 0
++  ifeq (${IS_X32_BIT}, 1)
++    CFLAGS += -DHAVE_ARCH_X32_SUPPORT
++  endif
+ endif
+ 
+ ifeq ($(ARCH),arm)
+--- linux-3.19/tools/perf/arch/x86/tests/regs_load.S~	2015-02-09 03:54:22.000000000 +0100
++++ linux-3.19/tools/perf/arch/x86/tests/regs_load.S	2015-04-11 12:21:07.717912384 +0200
+@@ -62,14 +62,20 @@
+ ENDPROC(perf_regs_load)
+ #else
+ ENTRY(perf_regs_load)
+-	push %edi
++#ifdef HAVE_ARCH_X32_SUPPORT
++#else
++	pushl %edi
++#endif
+ 	movl 8(%esp), %edi
+ 	movl %eax, AX(%edi)
+ 	movl %ebx, BX(%edi)
+ 	movl %ecx, CX(%edi)
+ 	movl %edx, DX(%edi)
+ 	movl %esi, SI(%edi)
+-	pop %eax
++#ifdef HAVE_ARCH_X32_SUPPORT
++#else
++	popl %eax
++#endif
+ 	movl %eax, DI(%edi)
+ 	movl %ebp, BP(%edi)
+ 
+--- linux-3.19/arch/x86/include/uapi/asm/bitsperlong.h~	2015-02-09 03:54:22.000000000 +0100
++++ linux-3.19/arch/x86/include/uapi/asm/bitsperlong.h	2015-04-11 12:31:26.051249909 +0200
+@@ -1,7 +1,7 @@
+ #ifndef __ASM_X86_BITSPERLONG_H
+ #define __ASM_X86_BITSPERLONG_H
+ 
+-#ifdef __x86_64__
++#if defined(__x86_64__) && !defined(__ILP32__)
+ # define __BITS_PER_LONG 64
+ #else
+ # define __BITS_PER_LONG 32
+--- linux-3.19/tools/perf/bench/sched-messaging.c~	2015-02-09 03:54:22.000000000 +0100
++++ linux-3.19/tools/perf/bench/sched-messaging.c	2015-04-11 12:33:22.587917365 +0200
+@@ -310,13 +310,24 @@
+ 		printf("# %d groups == %d %s run\n\n",
+ 		       num_groups, num_groups * 2 * num_fds,
+ 		       thread_mode ? "threads" : "processes");
++#if defined(__x86_64__) && !defined(__ILP32__)
+ 		printf(" %14s: %lu.%03lu [sec]\n", "Total time",
+ 		       diff.tv_sec,
+ 		       (unsigned long) (diff.tv_usec/1000));
++#else
++		printf(" %14s: %llu.%03llu [sec]\n", "Total time",
++		       diff.tv_sec,
++		       (unsigned long long) (diff.tv_usec/1000));
++#endif
+ 		break;
+ 	case BENCH_FORMAT_SIMPLE:
++#if defined(__x86_64__) && !defined(__ILP32__)
+ 		printf("%lu.%03lu\n", diff.tv_sec,
+ 		       (unsigned long) (diff.tv_usec/1000));
++#else
++		printf("%llu.%03llu\n", diff.tv_sec,
++		       (unsigned long long) (diff.tv_usec/1000));
++#endif
+ 		break;
+ 	default:
+ 		/* reaching here is something disaster */
+--- linux-3.19/tools/perf/bench/sched-pipe.c~	2015-02-09 03:54:22.000000000 +0100
++++ linux-3.19/tools/perf/bench/sched-pipe.c	2015-04-11 12:34:32.727917841 +0200
+@@ -156,9 +156,15 @@
+ 		result_usec = diff.tv_sec * 1000000;
+ 		result_usec += diff.tv_usec;
+ 
++#if defined(__x86_64__) && !defined(__ILP32__)
+ 		printf(" %14s: %lu.%03lu [sec]\n\n", "Total time",
+ 		       diff.tv_sec,
+ 		       (unsigned long) (diff.tv_usec/1000));
++#else
++		printf(" %14s: %llu.%03llu [sec]\n\n", "Total time",
++		       diff.tv_sec,
++		       (unsigned long long) (diff.tv_usec/1000));
++#endif
+ 
+ 		printf(" %14lf usecs/op\n",
+ 		       (double)result_usec / (double)loops);
+@@ -168,9 +174,15 @@
+ 		break;
+ 
+ 	case BENCH_FORMAT_SIMPLE:
++#if defined(__x86_64__) && !defined(__ILP32__)
+ 		printf("%lu.%03lu\n",
+ 		       diff.tv_sec,
+ 		       (unsigned long) (diff.tv_usec / 1000));
++#else
++		printf("%llu.%03llu\n",
++		       diff.tv_sec,
++		       (unsigned long long) (diff.tv_usec / 1000));
++#endif
+ 		break;
+ 
+ 	default:
+--- linux-3.19/tools/perf/builtin-stat.c~	2015-02-09 03:54:22.000000000 +0100
++++ linux-3.19/tools/perf/builtin-stat.c	2015-04-11 12:35:21.841251509 +0200
+@@ -550,7 +550,11 @@
+ 
+ 	clock_gettime(CLOCK_MONOTONIC, &ts);
+ 	diff_timespec(&rs, &ts, &ref_time);
++#if defined(__x86_64__) && !defined(__ILP32__)
+ 	sprintf(prefix, "%6lu.%09lu%s", rs.tv_sec, rs.tv_nsec, csv_sep);
++#else
++	sprintf(prefix, "%6llu.%09llu%s", rs.tv_sec, rs.tv_nsec, csv_sep);
++#endif
+ 
+ 	if (num_print_interval == 0 && !csv_output) {
+ 		switch (aggr_mode) {
+--- linux-3.19/tools/perf/builtin-kvm.c~	2015-02-09 03:54:22.000000000 +0100
++++ linux-3.19/tools/perf/builtin-kvm.c	2015-04-11 12:36:00.511251770 +0200
+@@ -565,7 +565,11 @@
+ 	gettimeofday(&tv, NULL);
+ 	if (localtime_r(&tv.tv_sec, &ltime)) {
+ 		strftime(date, sizeof(date), "%H:%M:%S", &ltime);
++#if defined(__x86_64__) && !defined(__ILP32__)
+ 		pr_info("%s.%06ld", date, tv.tv_usec);
++#else
++		pr_info("%s.%06lld", date, tv.tv_usec);
++#endif
+ 	} else
+ 		pr_info("00:00:00.000000");
+ 

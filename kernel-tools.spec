@@ -26,13 +26,17 @@ License:	GPL v2
 Group:		Applications/System
 Source0:	https://www.kernel.org/pub/linux/kernel/v3.x/linux-%{basever}.tar.xz
 # Source0-md5:	d3fc8316d4d4d04b65cbc2d70799e763
+Source1:	cpupower.service
+Source2:	cpupower.config
 %if "%{postver}" != ".0"
 Patch0:		https://www.kernel.org/pub/linux/kernel/v3.x/patch-%{version}.xz
 # Patch0-md5:	1fec75551b2f55fced43df8394b1fd9a
 %endif
-Source1:	cpupower.service
-Source2:	cpupower.config
+Patch1:		x32.patch
 URL:		http://www.kernel.org/
+%ifarch %{x8664}
+BuildRequries:	gcc-multilib-x32
+%endif
 BuildRequires:	gettext-tools
 BuildRequires:	pciutils-devel
 BuildRequires:	rpmbuild(macros) >= 1.647
@@ -198,6 +202,8 @@ cd linux-%{basever}
 %patch0 -p1
 %endif
 
+%patch1 -p1
+
 sed -i -e 's#libexec/perf-core#%{_datadir}/perf-core#g' tools/perf/config/Makefile
 
 %build
@@ -213,19 +219,19 @@ cd linux-%{basever}
 	OPTIMIZATION="%{rpmcflags}" \
 	STRIPCMD=true
 
-%ifarch %{ix86}
+%ifarch %{ix86} x32
 %{__make} -C tools/power/cpupower/debug/i386 centrino-decode powernow-k8-decode \
 	CC="%{__cc}" \
 	CFLAGS="%{rpmcflags}"
 %endif
 
-%ifarch %{x8664}
+%ifarch %{x8664} x32
 %{__make} -C tools/power/cpupower/debug/x86_64 centrino-decode powernow-k8-decode \
 	CC="%{__cc}" \
 	CFLAGS="%{rpmcflags}"
 %endif
 
-%ifarch %{ix86} %{x8664}
+%ifarch %{ix86} %{x8664} x32
 %{__make} -C tools/power/x86/x86_energy_perf_policy \
 	CC="%{__cc}" \
 	CFLAGS="%{rpmcflags}"
@@ -276,10 +282,10 @@ install -d $RPM_BUILD_ROOT{/etc/sysconfig,%{systemdunitdir}}
 cp -p %{SOURCE1} $RPM_BUILD_ROOT%{systemdunitdir}/cpupower.service
 cp -p %{SOURCE2} $RPM_BUILD_ROOT/etc/sysconfig/cpupower
 
-%ifarch %{ix86}
+%ifarch %{ix86} x32
 install -p tools/power/cpupower/debug/i386/{centrino,powernow-k8}-decode $RPM_BUILD_ROOT%{_bindir}
 %endif
-%ifarch %{x8664}
+%ifarch %{x8664} x32
 install -p tools/power/cpupower/debug/x86_64/{centrino,powernow-k8}-decode $RPM_BUILD_ROOT%{_bindir}
 %endif
 
@@ -287,7 +293,7 @@ install -p tools/vm/slabinfo $RPM_BUILD_ROOT%{_bindir}
 install -p tools/vm/page-types $RPM_BUILD_ROOT%{_sbindir}
 install -p dslm $RPM_BUILD_ROOT%{_sbindir}
 
-%ifarch %{ix86} %{x8664}
+%ifarch %{ix86} %{x8664} x32
 install -d $RPM_BUILD_ROOT%{_mandir}/man8
 # broken makefile, install manually
 %if 0
@@ -359,11 +365,11 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/slabinfo
 %attr(755,root,root) %{_sbindir}/dslm
 %attr(755,root,root) %{_sbindir}/page-types
-%ifarch %{ix86} %{x8664}
+%ifarch %{ix86} %{x8664} x32
 %attr(755,root,root) %{_bindir}/centrino-decode
 %attr(755,root,root) %{_bindir}/powernow-k8-decode
 %endif
-%ifarch %{ix86} %{x8664}
+%ifarch %{ix86} %{x8664} x32
 %attr(755,root,root) %{_bindir}/turbostat
 %attr(755,root,root) %{_bindir}/x86_energy_perf_policy
 %{_mandir}/man8/turbostat.8*
@@ -391,7 +397,10 @@ rm -rf $RPM_BUILD_ROOT
 %files perf
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/perf
+%ifarch %{x8664}
 %attr(755,root,root) %{_bindir}/perf-read-vdso32
+%attr(755,root,root) %{_bindir}/perf-read-vdsox32
+%endif
 %attr(755,root,root) %{_bindir}/trace
 %{_mandir}/man1/perf*.1*
 %dir %{_datadir}/perf-core
