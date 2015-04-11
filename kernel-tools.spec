@@ -21,7 +21,7 @@ Summary:	Assortment of tools for the Linux kernel
 Summary(pl.UTF-8):	Zestaw narzędzi dla jądra Linuksa
 Name:		kernel-tools
 Version:	%{basever}%{postver}
-Release:	2
+Release:	3
 License:	GPL v2
 Group:		Applications/System
 Source0:	https://www.kernel.org/pub/linux/kernel/v3.x/linux-%{basever}.tar.xz
@@ -154,6 +154,36 @@ przez nowe wersje jądra Linuksa.
 
 Ten pakiet zawiera podstawowe pliki, skrypty oraz interfejs tekstowy
 (TUI).
+
+%package perf-vdso32
+Summary:	perf profiler tool
+Summary(pl.UTF-8):	Narzędzie profilujące perf
+Group:		Applications/System
+Requires:	%{name}-perf = %{version}-%{release}
+
+%description perf-vdso32
+Perf is a profiler tool for Linux 2.6+ based systems that abstracts
+away CPU hardware differences in Linux performance measurements and
+presents a simple commandline interface. Perf is based on the
+perf_events interface exported by recent versions of the Linux kernel.
+
+This package contains perf-read-vdso32 tool for reading the 32-bit
+compatibility VDSO in 64-bit mode.
+
+%package perf-vdsox32
+Summary:	perf profiler tool
+Summary(pl.UTF-8):	Narzędzie profilujące perf
+Group:		Applications/System
+Requires:	%{name}-perf = %{version}-%{release}
+
+%description perf-vdsox32
+Perf is a profiler tool for Linux 2.6+ based systems that abstracts
+away CPU hardware differences in Linux performance measurements and
+presents a simple commandline interface. Perf is based on the
+perf_events interface exported by recent versions of the Linux kernel.
+
+This package contains perf-read-vdso32 tool for reading the x32 mode
+32-bit compatibility VDSO in 64-bit mode.
 
 %package perf-gtk
 Summary:	perf profiler tool (GTK+ 2 GUI)
@@ -403,10 +433,6 @@ rm -rf $RPM_BUILD_ROOT
 %files perf
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/perf
-%ifarch %{x8664}
-%attr(755,root,root) %{_bindir}/perf-read-vdso32
-%attr(755,root,root) %{_bindir}/perf-read-vdsox32
-%endif
 %attr(755,root,root) %{_bindir}/trace
 %{_mandir}/man1/perf*.1*
 %dir %{_datadir}/perf-core
@@ -438,6 +464,16 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{_libdir}/traceevent
 %dir %{_libdir}/traceevent/plugins
 %attr(755,root,root) %{_libdir}/traceevent/plugins/plugin_*.so
+
+%ifarch %{x8664}
+%files perf-vdso32
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_bindir}/perf-read-vdso32
+
+%files perf-vdsox32
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_bindir}/perf-read-vdsox32
+%endif
 
 %if %{with gtk}
 %files perf-gtk
