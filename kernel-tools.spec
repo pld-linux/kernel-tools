@@ -15,21 +15,21 @@
 %undefine	with_libunwind
 %endif
 
-%define		basever		3.19
-%define		postver		.3
+%define		basever		4.0
+%define		postver		.0
 Summary:	Assortment of tools for the Linux kernel
 Summary(pl.UTF-8):	Zestaw narzędzi dla jądra Linuksa
 Name:		kernel-tools
 Version:	%{basever}%{postver}
-Release:	3
+Release:	1
 License:	GPL v2
 Group:		Applications/System
-Source0:	https://www.kernel.org/pub/linux/kernel/v3.x/linux-%{basever}.tar.xz
-# Source0-md5:	d3fc8316d4d4d04b65cbc2d70799e763
+Source0:	https://www.kernel.org/pub/linux/kernel/v4.x/linux-%{basever}.tar.xz
+# Source0-md5:	a86916bd12798220da9eb4a1eec3616d
 Source1:	cpupower.service
 Source2:	cpupower.config
 %if "%{postver}" != ".0"
-Patch0:		https://www.kernel.org/pub/linux/kernel/v3.x/patch-%{version}.xz
+Patch0:		https://www.kernel.org/pub/linux/kernel/v4.x/patch-%{version}.xz
 # Patch0-md5:	1fec75551b2f55fced43df8394b1fd9a
 %endif
 Patch1:		x32.patch
