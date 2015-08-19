@@ -21,7 +21,7 @@ Summary:	Assortment of tools for the Linux kernel
 Summary(pl.UTF-8):	Zestaw narzędzi dla jądra Linuksa
 Name:		kernel-tools
 Version:	%{basever}%{postver}
-Release:	1
+Release:	2
 License:	GPL v2
 Group:		Applications/System
 Source0:	https://www.kernel.org/pub/linux/kernel/v4.x/linux-%{basever}.tar.xz
@@ -35,6 +35,7 @@ Patch0:		https://www.kernel.org/pub/linux/kernel/v4.x/patch-%{version}.xz
 Patch1:		x32.patch
 URL:		http://www.kernel.org/
 %ifarch %{x8664}
+BuildRequires:	gcc-multilib-32
 BuildRequires:	gcc-multilib-x32
 %endif
 BuildRequires:	gettext-tools
@@ -328,29 +329,13 @@ install -p dslm $RPM_BUILD_ROOT%{_sbindir}
 
 %ifarch %{ix86} %{x8664} x32
 install -d $RPM_BUILD_ROOT%{_mandir}/man8
-# broken makefile, install manually
-%if 0
 %{__make} install \
 	-C tools/power/x86/x86_energy_perf_policy \
 	DESTDIR=$RPM_BUILD_ROOT
-%else
-cd tools/power/x86/x86_energy_perf_policy
-install -p x86_energy_perf_policy $RPM_BUILD_ROOT%{_bindir}
-cp -p x86_energy_perf_policy.8 $RPM_BUILD_ROOT%{_mandir}/man8
-cd -
-%endif
 
-# broken makefile, install manually
-%if 0
 %{__make} install \
 	-C tools/power/x86/turbostat \
 	DESTDIR=$RPM_BUILD_ROOT
-%else
-cd tools/power/x86/turbostat
-cp -p turbostat.8 $RPM_BUILD_ROOT%{_mandir}/man8
-cd -
-install -p turbostat $RPM_BUILD_ROOT%{_bindir}/turbostat
-%endif
 %endif
 
 %if %{with perf}
