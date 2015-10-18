@@ -157,8 +157,8 @@ Ten pakiet zawiera podstawowe pliki, skrypty oraz interfejs tekstowy
 (TUI).
 
 %package perf-vdso32
-Summary:	perf profiler tool
-Summary(pl.UTF-8):	Narzędzie profilujące perf
+Summary:	perf profiler tool - VDSO 32-bit ABI reader
+Summary(pl.UTF-8):	Narzędzie profilujące perf - odczyt VDSO dla ABI 32-bitowego
 Group:		Applications/System
 Requires:	%{name}-perf = %{version}-%{release}
 
@@ -171,9 +171,19 @@ perf_events interface exported by recent versions of the Linux kernel.
 This package contains perf-read-vdso32 tool for reading the 32-bit
 compatibility VDSO in 64-bit mode.
 
+%description perf-vdso32 -l pl.UTF-8
+Perf to narzędzie profilujące dla systemów opartych na Linuksie 2.6+,
+odseparowujące od różnic sprzętowych między pomiarami wydajności w
+zależności od procesora oraz udostępniające prosty interfejs linii
+poleceń. Perf jest oparty na interfejsie perf_events eksportowanym
+przez nowe wersje jądra Linuksa.
+
+Ten pakiet zawiera narzędzie perf-read-vdso32 do odczytu VDSO dla
+binariów 32-bitowych w trybie 64-bitowym.
+
 %package perf-vdsox32
-Summary:	perf profiler tool
-Summary(pl.UTF-8):	Narzędzie profilujące perf
+Summary:	perf profiler tool - VDSO x32 ABI reader
+Summary(pl.UTF-8):	Narzędzie profilujące perf - odczyt VDSO dla ABI x32
 Group:		Applications/System
 Requires:	%{name}-perf = %{version}-%{release}
 
@@ -185,6 +195,16 @@ perf_events interface exported by recent versions of the Linux kernel.
 
 This package contains perf-read-vdso32 tool for reading the x32 mode
 32-bit compatibility VDSO in 64-bit mode.
+
+%description perf-vdsox32 -l pl.UTF-8
+Perf to narzędzie profilujące dla systemów opartych na Linuksie 2.6+,
+odseparowujące od różnic sprzętowych między pomiarami wydajności w
+zależności od procesora oraz udostępniające prosty interfejs linii
+poleceń. Perf jest oparty na interfejsie perf_events eksportowanym
+przez nowe wersje jądra Linuksa.
+
+Ten pakiet zawiera narzędzie perf-read-vdso32 do odczytu VDSO dla
+binariów ABI x32 w trybie 64-bitowym.
 
 %package perf-gtk
 Summary:	perf profiler tool (GTK+ 2 GUI)
