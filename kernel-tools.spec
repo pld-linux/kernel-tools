@@ -21,7 +21,7 @@ Summary:	Assortment of tools for the Linux kernel
 Summary(pl.UTF-8):	Zestaw narzędzi dla jądra Linuksa
 Name:		kernel-tools
 Version:	%{basever}%{postver}
-Release:	2
+Release:	3
 License:	GPL v2
 Group:		Applications/System
 Source0:	https://www.kernel.org/pub/linux/kernel/v4.x/linux-%{basever}.tar.xz
@@ -117,6 +117,7 @@ Requires:	%{name} = %{version}-%{release}
 Requires:	%{name}-cpupower-libs = %{version}-%{release}
 Provides:	cpupowerutils-devel = 1:009-0.6.p1
 Obsoletes:	cpupowerutils-devel < 1:009-0.6.p1
+Conflicts:	cpufrequtils-devel
 
 %description cpupower-libs-devel
 Development files for the cpupower library.
