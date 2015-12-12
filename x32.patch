@@ -52,17 +52,6 @@
  	movl %eax, DI(%edi)
  	movl %ebp, BP(%edi)
  
---- linux-3.19/arch/x86/include/uapi/asm/bitsperlong.h~	2015-02-09 03:54:22.000000000 +0100
-+++ linux-3.19/arch/x86/include/uapi/asm/bitsperlong.h	2015-04-11 12:31:26.051249909 +0200
-@@ -1,7 +1,7 @@
- #ifndef __ASM_X86_BITSPERLONG_H
- #define __ASM_X86_BITSPERLONG_H
- 
--#ifdef __x86_64__
-+#if defined(__x86_64__) && !defined(__ILP32__)
- # define __BITS_PER_LONG 64
- #else
- # define __BITS_PER_LONG 32
 --- linux-3.19/tools/perf/bench/sched-messaging.c~	2015-02-09 03:54:22.000000000 +0100
 +++ linux-3.19/tools/perf/bench/sched-messaging.c	2015-04-11 12:33:22.587917365 +0200
 @@ -310,13 +310,24 @@
