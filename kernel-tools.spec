@@ -1,18 +1,21 @@
 # TODO:
 # - redefine: PACKAGE_BUGREPORT=cpufreq@vger.kernel.org
 # - add -n python-perf?
-# - without perf bcond does not work (it still builds it)
 # - add bcond to disable building docs (perf docs)
-# - install of perf compiles things over again
+# - install of perf links perf binary again
 
 # Conditional build:
 %bcond_without	verbose		# verbose build (V=1)
 %bcond_without	perf		# perf tools
 %bcond_without	gtk		# GTK+ 2.x perf support
 %bcond_without	libunwind	# libunwind perf support
+%bcond_without	multilib	# multilib perf support
 
 %ifarch x32
 %undefine	with_libunwind
+%endif
+%ifnarch %{x8664}
+%undefine	with_multilib
 %endif
 
 %define		basever		4.4
@@ -34,10 +37,6 @@ Patch0:		https://www.kernel.org/pub/linux/kernel/v4.x/patch-%{version}.xz
 %endif
 Patch1:		x32.patch
 URL:		http://www.kernel.org/
-%ifarch %{x8664}
-BuildRequires:	gcc-multilib-32
-BuildRequires:	gcc-multilib-x32
-%endif
 BuildRequires:	gettext-tools
 BuildRequires:	pciutils-devel
 BuildRequires:	rpmbuild(macros) >= 1.647
@@ -52,6 +51,10 @@ BuildRequires:	docbook-dtd45-xml
 BuildRequires:	docbook-style-xsl
 BuildRequires:	elfutils-devel
 BuildRequires:	flex
+%if %{with multilib}
+BuildRequires:	gcc-multilib-32
+BuildRequires:	gcc-multilib-x32
+%endif
 %{?with_libunwind:BuildRequires:	libunwind-devel >= 0.99}
 BuildRequires:	numactl-devel
 BuildRequires:	perl-devel >= 5.1
@@ -295,6 +298,7 @@ CFLAGS="%{rpmcflags}" \
 %{__make} -C tools/perf all man \
 %ifarch %{x8664}
 	IS_X86_64=1 \
+	%{!?with_multilib:NO_PERF_READ_VDSO32=1 NO_PERF_READ_VDSOX32=1} \
 %endif
 	%{!?with_gtk:NO_GTK2=1} \
 	%{!?with_libunwind:NO_LIBUNWIND=1} \
@@ -344,20 +348,18 @@ install -p dslm $RPM_BUILD_ROOT%{_sbindir}
 
 %ifarch %{ix86} %{x8664} x32
 install -d $RPM_BUILD_ROOT%{_mandir}/man8
-%{__make} install \
-	-C tools/power/x86/x86_energy_perf_policy \
+%{__make} -C tools/power/x86/x86_energy_perf_policy install \
 	DESTDIR=$RPM_BUILD_ROOT
 
-%{__make} install \
-	-C tools/power/x86/turbostat \
+%{__make} -C tools/power/x86/turbostat install \
 	DESTDIR=$RPM_BUILD_ROOT
 %endif
 
 %if %{with perf}
-%{__make} -j1 install install-man \
-	-C tools/perf \
+%{__make} -C tools/perf -j1 install install-man \
 %ifarch %{x8664}
 	IS_X86_64=1 \
+	%{!?with_multilib:NO_PERF_READ_VDSO32=1 NO_PERF_READ_VDSOX32=1} \
 %endif
 	%{!?with_gtk:NO_GTK2=1} \
 	%{!?with_libunwind:NO_LIBUNWIND=1} \
@@ -465,7 +467,7 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{_libdir}/traceevent/plugins
 %attr(755,root,root) %{_libdir}/traceevent/plugins/plugin_*.so
 
-%ifarch %{x8664}
+%if %{with multilib}
 %files perf-vdso32
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/perf-read-vdso32
