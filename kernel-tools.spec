@@ -116,7 +116,6 @@ Biblioteka cpupower.
 Summary:	Development files for the cpupower library
 Summary(pl.UTF-8):	Pliki programistyczne biblioteki cpupower
 Group:		Development/Libraries
-Requires:	%{name} = %{version}-%{release}
 Requires:	%{name}-cpupower-libs = %{version}-%{release}
 Provides:	cpupowerutils-devel = 1:009-0.6.p1
 Obsoletes:	cpupowerutils-devel < 1:009-0.6.p1
