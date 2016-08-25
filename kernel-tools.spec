@@ -18,17 +18,17 @@
 %undefine	with_multilib
 %endif
 
-%define		basever		4.4
+%define		basever		4.7
 %define		postver		.0
 Summary:	Assortment of tools for the Linux kernel
 Summary(pl.UTF-8):	Zestaw narzędzi dla jądra Linuksa
 Name:		kernel-tools
 Version:	%{basever}%{postver}
-Release:	3
+Release:	1
 License:	GPL v2
 Group:		Applications/System
 Source0:	https://www.kernel.org/pub/linux/kernel/v4.x/linux-%{basever}.tar.xz
-# Source0-md5:	9a78fa2eb6c68ca5a40ed5af08142599
+# Source0-md5:	5276563eb1f39a048e4a8a887408c031
 Source1:	cpupower.service
 Source2:	cpupower.config
 %if "%{postver}" != ".0"
@@ -288,6 +288,10 @@ CFLAGS="%{rpmcflags}" \
 	CC="%{__cc}"
 %endif
 
+%{__make} -C tools/lib/api \
+	CC="%{__cc}" \
+	EXTRA_CFLAGS="%{rpmcflags}"
+
 # page-types, slabinfo
 %{__make} -C tools/vm page-types slabinfo \
 	CC="%{__cc}" \
@@ -429,6 +433,7 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libcpupower.so
 %{_includedir}/cpufreq.h
+%{_includedir}/cpuidle.h
 
 %if %{with perf}
 %files perf
