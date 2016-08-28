@@ -392,7 +392,7 @@ CFLAGS="%{rpmcflags}" \
 	CFLAGS="%{rpmcflags}"
 
 %ifarch %{ix86}
-# drivers/lguest is x86_32 only
+# drivers/lguest is x86-32 only
 %{__make} -C tools/lguest \
 	CC="%{__cc}" \
 	CFLAGS="%{rpmcflags} -Wall -U_FORTIFY_SOURCE -Iinclude"
@@ -555,7 +555,9 @@ install -p tools/iio/generic_buffer $RPM_BUILD_ROOT%{_bindir}/iio_generic_buffer
 
 install -p tools/laptop/freefall/freefall $RPM_BUILD_ROOT%{_sbindir}
 
+%ifarch %{ix86}
 install -p tools/lguest/lguest $RPM_BUILD_ROOT%{_bindir}
+%endif
 
 install -p tools/net/{bpf_asm,bpf_dbg,bpf_jit_disasm} $RPM_BUILD_ROOT%{_bindir}
 
@@ -597,14 +599,12 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
-%doc linux-%{basever}/tools/lguest/lguest.txt
 %attr(755,root,root) %{_bindir}/bpf_asm
 %attr(755,root,root) %{_bindir}/bpf_dbg
 %attr(755,root,root) %{_bindir}/bpf_jit_disasm
 %attr(755,root,root) %{_bindir}/gen_init_cpio
 %attr(755,root,root) %{_bindir}/iio_event_monitor
 %attr(755,root,root) %{_bindir}/iio_generic_buffer
-%attr(755,root,root) %{_bindir}/lguest
 %attr(755,root,root) %{_bindir}/lsgpio
 %attr(755,root,root) %{_bindir}/lsiio
 %attr(755,root,root) %{_bindir}/slabinfo
@@ -613,6 +613,10 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_sbindir}/freefall
 %attr(755,root,root) %{_sbindir}/page-types
 %{_mandir}/man8/tmon.8*
+%ifarch %{ix86}
+%doc linux-%{basever}/tools/lguest/lguest.txt
+%attr(755,root,root) %{_bindir}/lguest
+%endif
 %ifarch %{ix86} %{x8664} x32
 %attr(755,root,root) %{_bindir}/centrino-decode
 %attr(755,root,root) %{_bindir}/powernow-k8-decode
