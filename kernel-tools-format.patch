@@ -1,0 +1,11 @@
+--- linux-4.7/tools/hv/hv_kvp_daemon.c.orig	2016-07-24 21:23:50.000000000 +0200
++++ linux-4.7/tools/hv/hv_kvp_daemon.c	2016-08-27 20:27:31.468372672 +0200
+@@ -702,7 +702,7 @@
+ 	if (dir == NULL)
+ 		return NULL;
+ 
+-	snprintf(dev_id, sizeof(dev_id), kvp_net_dir);
++	snprintf(dev_id, sizeof(dev_id), "%s", kvp_net_dir);
+ 	q = dev_id + strlen(kvp_net_dir);
+ 
+ 	while ((entry = readdir(dir)) != NULL) {
