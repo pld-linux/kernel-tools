@@ -6,10 +6,12 @@
 
 # Conditional build:
 %bcond_without	verbose		# verbose build (V=1)
+%bcond_without	cpupower	# cpupower tools
 %bcond_without	perf		# perf tools
 %bcond_without	gtk		# GTK+ 2.x perf support
 %bcond_without	libunwind	# libunwind perf support
 %bcond_without	multilib	# multilib perf support
+%bcond_without	usbip		# usbip utils
 
 %ifarch x32
 %undefine	with_libunwind
@@ -24,7 +26,7 @@ Summary:	Assortment of tools for the Linux kernel
 Summary(pl.UTF-8):	Zestaw narzędzi dla jądra Linuksa
 Name:		kernel-tools
 Version:	%{basever}%{postver}
-Release:	1
+Release:	2
 License:	GPL v2
 Group:		Applications/System
 Source0:	https://www.kernel.org/pub/linux/kernel/v4.x/linux-%{basever}.tar.xz
@@ -36,9 +38,14 @@ Patch0:		https://www.kernel.org/pub/linux/kernel/v4.x/patch-%{version}.xz
 # Patch0-md5:	3a465c7cf55ec9dbf2d72d9292aa5fde
 %endif
 Patch1:		x32.patch
+Patch2:		%{name}-format.patch
 URL:		http://www.kernel.org/
+BuildRequires:	bison
+BuildRequires:	flex
 BuildRequires:	gettext-tools
+BuildRequires:	ncurses-devel
 BuildRequires:	pciutils-devel
+BuildRequires:	pkgconfig
 BuildRequires:	rpmbuild(macros) >= 1.647
 BuildRequires:	tar >= 1:1.22
 BuildRequires:	xz
@@ -46,11 +53,9 @@ BuildRequires:	xz
 BuildRequires:	asciidoc
 BuildRequires:	audit-libs-devel
 BuildRequires:	binutils-devel
-BuildRequires:	bison
 BuildRequires:	docbook-dtd45-xml
 BuildRequires:	docbook-style-xsl
 BuildRequires:	elfutils-devel
-BuildRequires:	flex
 %if %{with multilib}
 BuildRequires:	gcc-multilib-32
 BuildRequires:	gcc-multilib-x32
@@ -64,8 +69,15 @@ BuildRequires:	slang-devel
 BuildRequires:	xmlto
 %if %{with gtk}
 BuildRequires:	gtk+2-devel >= 2.0
-BuildRequires:	pkgconfig
 %endif
+%endif
+%if %{with usbip}
+BuildRequires:	autoconf >= 2.59
+BuildRequires:	automake >= 1:1.9
+BuildRequires:	gcc >= 6:4.0
+BuildRequires:	libtool >= 2:2
+BuildRequires:	libwrap-devel
+BuildRequires:	udev-devel
 %endif
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -126,6 +138,17 @@ Development files for the cpupower library.
 
 %description cpupower-libs-devel -l pl.UTF-8
 Pliki programistyczne biblioteki cpupower.
+
+%package hv
+Summary:	Hyper-V virtualization tools
+Summary(pl.UTF-8):	Narzędzia do wirtualizacji Hyper-V
+Group:		Applications/System
+
+%description hv
+Hyper-V virtualization tools.
+
+%description hv -l pl.UTF-8
+Narzędzia do wirtualizacji Hyper-V.
 
 %package perf
 Summary:	perf profiler tool
@@ -242,6 +265,86 @@ Bash completion for perf command.
 %description -n bash-completion-perf -l pl.UTF-8
 Bashowe uzupełnianie parametrów dla polecenia perf.
 
+%package -n usbip
+Summary:	USB device sharing system over IP network
+Summary(pl.UTF-8):	System współdzielenia urządzeń USB po sieci IP
+Group:		Networking/Utilities
+Requires:	usbip-libs = %{version}-%{release}
+# /lib/hwdata/usb.ids (note: only uncompressed file supported)
+Requires:	hwdata >= 0.243-2
+
+%description -n usbip
+The USB/IP Project aims to develop a general USB device sharing system
+over IP network. To share USB devices between computers with their
+full functionality, USB/IP encapsulates "USB requests" into IP packets
+and transmits them between computers. Original USB device drivers and
+applications can be also used for remote USB devices without any
+modification of them. A computer can use remote USB devices as if they
+were directly attached; for example, we can:
+ - USB storage devices: fdisk, mkfs, mount/umount, file operations,
+   play a DVD movie and record a DVD-R media.
+ - USB keyboards and USB mice: use with Linux console and X Window
+   System.
+ - USB webcams and USB speakers: view webcam, capture image data and
+   play some music.
+ - USB printers, USB scanners, USB serial converters and USB Ethernet
+   interfaces: ok, use fine.
+
+%description -n usbip -l pl.UTF-8
+Projekt USB/IP ma na celu stworzenie ogólnego systemu współdzielenia
+urządzeń USB po sieci IP. W celu współdzielenia urządzeń USB między
+komputerami z zachowaniem pełnej funkcjonalności, USB/IP obudowuje
+żądania SUB w pakiety IP i przesyła je między komputerami. Oryginalne
+sterowniki urządzeń USB oraz aplikacje mogą być używane bez żadnych
+modyfikacji. Komputer może wykorzystywać zdaln urządzenia USB tak,
+jakby były podłączone bezpośrednio. Przykładowe możliwości:
+ - urządzenia USB do przechowywania danych: można używać programów
+   fdisk, mkfs, mount/umount, operacji na plikach, odtwarzać filmy
+   DVD oraz nagrywać nośniki DVD-R
+ - klawiatury i myszy USB: można ich używać na linuksowej konsoli oraz
+   w systemie X Window
+ - kamery i głośniki USB: można oglądać obraz z kamery, robić zdjęcia
+   i odtwarzać muzykę
+ - drukarki, skanery, konwertery portów szeregowych oraz interfejsy
+   sieciowe USB: można ich normalnie używać
+
+%package -n usbip-libs
+Summary:	USB/IP library
+Summary(pl.UTF-8):	Biblioteka USB/IP
+Group:		Libraries
+
+%description -n usbip-libs
+USB over IP library.
+
+%description -n usbip-libs -l pl.UTF-8
+Biblioteka USB po IP.
+
+%package -n usbip-devel
+Summary:	Header files for usbip library
+Summary(pl.UTF-8):	Pliki nagłówkowe biblioteki usbip
+Group:		Development/Libraries
+Requires:	usbip-libs = %{version}-%{release}
+
+%description -n usbip-devel
+This package contains the header files needed to develop programs
+which make use of USB/IP.
+
+%description -n usbip-devel -l pl.UTF-8
+Ten pakiet zawiera pliki nagłówkowe potrzebne do tworzenia programów
+wykorzystujących USB/IP.
+
+%package -n usbip-static
+Summary:	Static usbip library
+Summary(pl.UTF-8):	Statyczna biblioteka usbip
+Group:		Development/Libraries
+Requires:	usbip-devel = %{version}-%{release}
+
+%description -n usbip-static
+Static usbip library.
+
+%description -n usbip-static -l pl.UTF-8
+Statyczna biblioteka usbip.
+
 %prep
 %setup -qc
 cd linux-%{basever}
@@ -251,8 +354,11 @@ cd linux-%{basever}
 %endif
 
 %patch1 -p1
+%patch2 -p1
 
-sed -i -e 's#libexec/perf-core#%{_datadir}/perf-core#g' tools/perf/config/Makefile
+%{__sed} -i -e '/^CFLAGS = /s/ -g / $(OPTFLAGS) /' tools/hv/Makefile
+%{__sed} -i -e '/^CFLAGS+=/s/ -O1 / $(OPTFLAGS) /' tools/thermal/tmon/Makefile
+%{__sed} -i -e 's#libexec/perf-core#%{_datadir}/perf-core#g' tools/perf/config/Makefile
 
 %build
 cd linux-%{basever}
@@ -260,43 +366,43 @@ cd linux-%{basever}
 # Simple Disk Sleep Monitor
 %{__cc} %{rpmcppflags} %{rpmcflags} %{rpmldflags} Documentation/laptops/dslm.c -o dslm
 
-# cpupower
-%{__make} -C tools/power/cpupower \
-	%{makeopts} \
-	CPUFREQ_BENCH=false \
-	OPTIMIZATION="%{rpmcflags}" \
-	STRIPCMD=true
-
-%ifarch %{ix86} x32
-%{__make} -C tools/power/cpupower/debug/i386 centrino-decode powernow-k8-decode \
-	CC="%{__cc}" \
-	CFLAGS="%{rpmcflags}"
-%endif
-
-%ifarch %{x8664} x32
-%{__make} -C tools/power/cpupower/debug/x86_64 centrino-decode powernow-k8-decode \
-	CC="%{__cc}" \
-	CFLAGS="%{rpmcflags}"
-%endif
-
-%ifarch %{ix86} %{x8664} x32
-%{__make} -C tools/power/x86/x86_energy_perf_policy \
-	CC="%{__cc}" \
-	CFLAGS="%{rpmcflags}"
-CFLAGS="%{rpmcflags}" \
-%{__make} -C tools/power/x86/turbostat \
-	CC="%{__cc}"
-%endif
-
+# tools common (used eg. by tools/vm)
 %{__make} -C tools/lib/api \
 	CC="%{__cc}" \
 	EXTRA_CFLAGS="%{rpmcflags}"
 
-# page-types, slabinfo
-%{__make} -C tools/vm page-types slabinfo \
-	CC="%{__cc}" \
-	CFLAGS="%{rpmcflags} -Wall -Wextra -I../lib"
+# lsgpio
+CFLAGS="%{rpmcflags}" \
+%{__make} -C tools/gpio \
+	CC="%{__cc}"
 
+# HyperV is Windows based, x86 specific
+%ifarch %{ix86} %{x8664} x32
+%{__make} -C tools/hv \
+	CC="%{__cc}" \
+	OPTFLAGS="%{rpmcflags}"
+%endif
+
+CFLAGS="%{rpmcflags}" \
+%{__make} -C tools/iio \
+	CC="%{__cc}"
+
+%{__make} -C tools/laptop/freefall \
+	CC="%{__cc}" \
+	CFLAGS="%{rpmcflags}"
+
+%ifarch %{ix86}
+# drivers/lguest is x86_32 only
+%{__make} -C tools/lguest \
+	CC="%{__cc}" \
+	CFLAGS="%{rpmcflags} -Wall -U_FORTIFY_SOURCE -Iinclude"
+%endif
+
+CFLAGS="%{rpmcflags}" \
+%{__make} -C tools/net \
+	CC="%{__cc}"
+
+# perf
 %if %{with perf}
 %{__make} -C tools/perf all man \
 %ifarch %{x8664}
@@ -314,6 +420,60 @@ CFLAGS="%{rpmcflags}" \
 	template_dir=%{_datadir}/perf-core/templates
 %endif
 
+# cpupower
+%if %{with cpupower}
+%{__make} -C tools/power/cpupower \
+	%{makeopts} \
+	CPUFREQ_BENCH=false \
+	OPTIMIZATION="%{rpmcflags}" \
+	STRIPCMD=true
+
+%ifarch %{ix86} x32
+%{__make} -C tools/power/cpupower/debug/i386 centrino-decode powernow-k8-decode \
+	CC="%{__cc}" \
+	CFLAGS="%{rpmcflags}"
+%endif
+
+%ifarch %{x8664} x32
+%{__make} -C tools/power/cpupower/debug/x86_64 centrino-decode powernow-k8-decode \
+	CC="%{__cc}" \
+	CFLAGS="%{rpmcflags}"
+%endif
+%endif
+
+%ifarch %{ix86} %{x8664} x32
+%{__make} -C tools/power/x86/x86_energy_perf_policy \
+	CC="%{__cc}" \
+	CFLAGS="%{rpmcflags}"
+CFLAGS="%{rpmcflags}" \
+%{__make} -C tools/power/x86/turbostat \
+	CC="%{__cc}"
+%endif
+
+%{__make} -C tools/thermal/tmon \
+	CC="%{__cc}" \
+	OPTFLAGS="%{rpmcflags}"
+
+# usbip-utils
+%if %{with usbip}
+cd tools/usb/usbip
+%{__libtoolize}
+%{__aclocal}
+%{__autoconf}
+%{__autoheader}
+%{__automake}
+%configure \
+	--disable-silent-rules \
+	--with-usbids-dir=/lib/hwdata
+%{__make}
+cd ../../..
+%endif
+
+# page-types, slabinfo
+%{__make} -C tools/vm page-types slabinfo \
+	CC="%{__cc}" \
+	CFLAGS="%{rpmcflags} -Wall -Wextra -I../lib"
+
 # gen_init_cpio
 %{__make} -C usr gen_init_cpio \
 	%{makeopts} \
@@ -323,8 +483,8 @@ CFLAGS="%{rpmcflags}" \
 rm -rf $RPM_BUILD_ROOT
 
 cd linux-%{basever}
-install -d $RPM_BUILD_ROOT%{_sbindir}
 
+%if %{with cpupower}
 %{__make} -C tools/power/cpupower install \
 	DESTDIR=$RPM_BUILD_ROOT \
 	libdir=%{_libdir} \
@@ -344,18 +504,6 @@ install -p tools/power/cpupower/debug/i386/{centrino,powernow-k8}-decode $RPM_BU
 %ifarch %{x8664} x32
 install -p tools/power/cpupower/debug/x86_64/{centrino,powernow-k8}-decode $RPM_BUILD_ROOT%{_bindir}
 %endif
-
-install -p tools/vm/slabinfo $RPM_BUILD_ROOT%{_bindir}
-install -p tools/vm/page-types $RPM_BUILD_ROOT%{_sbindir}
-install -p dslm $RPM_BUILD_ROOT%{_sbindir}
-
-%ifarch %{ix86} %{x8664} x32
-install -d $RPM_BUILD_ROOT%{_mandir}/man8
-%{__make} -C tools/power/x86/x86_energy_perf_policy install \
-	DESTDIR=$RPM_BUILD_ROOT
-
-%{__make} -C tools/power/x86/turbostat install \
-	DESTDIR=$RPM_BUILD_ROOT
 %endif
 
 %if %{with perf}
@@ -382,6 +530,50 @@ install -d $RPM_BUILD_ROOT%{_mandir}/man8
 %{__rm} -r $RPM_BUILD_ROOT%{_datadir}/perf-core/tests
 %endif
 
+%if %{with usbip}
+%{__make} -C tools/usb/usbip install \
+	DESTDIR=$RPM_BUILD_ROOT
+
+%{__rm} $RPM_BUILD_ROOT%{_libdir}/libusbip.la
+%endif
+
+install -d $RPM_BUILD_ROOT{%{_bindir},%{_sbindir},%{_mandir}/man8}
+
+install -p dslm $RPM_BUILD_ROOT%{_sbindir}
+
+install -p tools/gpio/lsgpio $RPM_BUILD_ROOT%{_bindir}
+
+%ifarch %{ix86} %{x8664} x32
+install -p tools/hv/hv_{fcopy,kvp,vss}_daemon $RPM_BUILD_ROOT%{_sbindir}
+# TODO: PLD-specific hv_get_dhcp_info,hv_get_dns_info,hv_set_ifconfig
+%{__sed} -e '1s,/usr/bin/env python,%{__python},' tools/hv/lsvmbus >$RPM_BUILD_ROOT%{_bindir}/lsvmbus
+chmod 755 $RPM_BUILD_ROOT%{_bindir}/lsvmbus
+%endif
+
+install -p tools/iio/{iio_event_monitor,lsiio} $RPM_BUILD_ROOT%{_bindir}
+install -p tools/iio/generic_buffer $RPM_BUILD_ROOT%{_bindir}/iio_generic_buffer
+
+install -p tools/laptop/freefall/freefall $RPM_BUILD_ROOT%{_sbindir}
+
+install -p tools/lguest/lguest $RPM_BUILD_ROOT%{_bindir}
+
+install -p tools/net/{bpf_asm,bpf_dbg,bpf_jit_disasm} $RPM_BUILD_ROOT%{_bindir}
+
+install -p tools/thermal/tmon/tmon $RPM_BUILD_ROOT%{_bindir}
+cp -p tools/thermal/tmon/tmon.8 $RPM_BUILD_ROOT%{_mandir}/man8
+
+install -p tools/vm/slabinfo $RPM_BUILD_ROOT%{_bindir}
+install -p tools/vm/page-types $RPM_BUILD_ROOT%{_sbindir}
+
+%ifarch %{ix86} %{x8664} x32
+install -d $RPM_BUILD_ROOT%{_mandir}/man8
+%{__make} -C tools/power/x86/x86_energy_perf_policy install \
+	DESTDIR=$RPM_BUILD_ROOT
+
+%{__make} -C tools/power/x86/turbostat install \
+	DESTDIR=$RPM_BUILD_ROOT
+%endif
+
 # gen_init_cpio
 install -p usr/gen_init_cpio $RPM_BUILD_ROOT%{_bindir}/gen_init_cpio
 
@@ -400,12 +592,27 @@ rm -rf $RPM_BUILD_ROOT
 %postun cpupower
 %systemd_reload
 
+%post	-n usbip-libs -p /sbin/ldconfig
+%postun	-n usbip-libs -p /sbin/ldconfig
+
 %files
 %defattr(644,root,root,755)
+%doc linux-%{basever}/tools/lguest/lguest.txt
+%attr(755,root,root) %{_bindir}/bpf_asm
+%attr(755,root,root) %{_bindir}/bpf_dbg
+%attr(755,root,root) %{_bindir}/bpf_jit_disasm
 %attr(755,root,root) %{_bindir}/gen_init_cpio
+%attr(755,root,root) %{_bindir}/iio_event_monitor
+%attr(755,root,root) %{_bindir}/iio_generic_buffer
+%attr(755,root,root) %{_bindir}/lguest
+%attr(755,root,root) %{_bindir}/lsgpio
+%attr(755,root,root) %{_bindir}/lsiio
 %attr(755,root,root) %{_bindir}/slabinfo
+%attr(755,root,root) %{_bindir}/tmon
 %attr(755,root,root) %{_sbindir}/dslm
+%attr(755,root,root) %{_sbindir}/freefall
 %attr(755,root,root) %{_sbindir}/page-types
+%{_mandir}/man8/tmon.8*
 %ifarch %{ix86} %{x8664} x32
 %attr(755,root,root) %{_bindir}/centrino-decode
 %attr(755,root,root) %{_bindir}/powernow-k8-decode
@@ -434,6 +641,17 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/libcpupower.so
 %{_includedir}/cpufreq.h
 %{_includedir}/cpuidle.h
+
+%ifarch %{ix86} %{x8664} x32
+%files hv
+%defattr(644,root,root,755)
+# TODO: PLDify these scripts and move to bindir
+%doc linux-%{basever}/tools/hv/hv_{get_dhcp_info,get_dns_info,set_ifconfig}.sh
+%attr(755,root,root) %{_bindir}/lsvmbus
+%attr(755,root,root) %{_sbindir}/hv_fcopy_daemon
+%attr(755,root,root) %{_sbindir}/hv_kvp_daemon
+%attr(755,root,root) %{_sbindir}/hv_vss_daemon
+%endif
 
 %if %{with perf}
 %files perf
@@ -490,4 +708,28 @@ rm -rf $RPM_BUILD_ROOT
 %files -n bash-completion-perf
 %defattr(644,root,root,755)
 /etc/bash_completion.d/perf
+%endif
+
+%if %{with usbip}
+%files -n usbip
+%defattr(644,root,root,755)
+%doc linux-%{basever}/tools/usb/usbip/{AUTHORS,README}
+%attr(755,root,root) %{_sbindir}/usbip
+%attr(755,root,root) %{_sbindir}/usbipd
+%{_mandir}/man8/usbip.8*
+%{_mandir}/man8/usbipd.8*
+
+%files -n usbip-libs
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libdir}/libusbip.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libusbip.so.0
+
+%files -n usbip-devel
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libdir}/libusbip.so
+%{_includedir}/usbip
+
+%files -n usbip-static
+%defattr(644,root,root,755)
+%{_libdir}/libusbip.a
 %endif
