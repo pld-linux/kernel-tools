@@ -21,12 +21,12 @@
 %endif
 
 %define		basever		4.8
-%define		postver		.0
+%define		postver		.1
 Summary:	Assortment of tools for the Linux kernel
 Summary(pl.UTF-8):	Zestaw narzędzi dla jądra Linuksa
 Name:		kernel-tools
 Version:	%{basever}%{postver}
-Release:	2
+Release:	1
 License:	GPL v2
 Group:		Applications/System
 Source0:	https://www.kernel.org/pub/linux/kernel/v4.x/linux-%{basever}.tar.xz
@@ -35,7 +35,7 @@ Source1:	cpupower.service
 Source2:	cpupower.config
 %if "%{postver}" != ".0"
 Patch0:		https://www.kernel.org/pub/linux/kernel/v4.x/patch-%{version}.xz
-# Patch0-md5:	3a465c7cf55ec9dbf2d72d9292aa5fde
+# Patch0-md5:	349734be5387f1605074515ad7207627
 %endif
 Patch1:		x32.patch
 Patch2:		%{name}-format.patch
