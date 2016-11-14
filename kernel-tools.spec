@@ -56,6 +56,7 @@ BuildRequires:	binutils-devel
 BuildRequires:	docbook-dtd45-xml
 BuildRequires:	docbook-style-xsl
 BuildRequires:	elfutils-devel
+BuildRequires:	linux-libc-headers >= 7:4.8
 %if %{with multilib}
 BuildRequires:	gcc-multilib-32
 BuildRequires:	gcc-multilib-x32
