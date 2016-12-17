@@ -62,20 +62,20 @@ FIXME: regs_load.S need complete x32 ABI support; now it will just compile, but 
 +#if defined(__x86_64__) && !defined(__ILP32__)
  		printf(" %14s: %lu.%03lu [sec]\n", "Total time",
  		       diff.tv_sec,
- 		       (unsigned long) (diff.tv_usec/1000));
+ 		       (unsigned long) (diff.tv_usec / USEC_PER_MSEC));
 +#else
 +		printf(" %14s: %llu.%03llu [sec]\n", "Total time",
 +		       diff.tv_sec,
-+		       (unsigned long long) (diff.tv_usec/1000));
++		       (unsigned long long) (diff.tv_usec / USEC_PER_MSEC));
 +#endif
  		break;
  	case BENCH_FORMAT_SIMPLE:
 +#if defined(__x86_64__) && !defined(__ILP32__)
  		printf("%lu.%03lu\n", diff.tv_sec,
- 		       (unsigned long) (diff.tv_usec/1000));
+ 		       (unsigned long) (diff.tv_usec / USEC_PER_MSEC));
 +#else
 +		printf("%llu.%03llu\n", diff.tv_sec,
-+		       (unsigned long long) (diff.tv_usec/1000));
++		       (unsigned long long) (diff.tv_usec / USEC_PER_MSEC));
 +#endif
  		break;
  	default:
@@ -89,11 +89,11 @@ FIXME: regs_load.S need complete x32 ABI support; now it will just compile, but 
 +#if defined(__x86_64__) && !defined(__ILP32__)
  		printf(" %14s: %lu.%03lu [sec]\n\n", "Total time",
  		       diff.tv_sec,
- 		       (unsigned long) (diff.tv_usec/1000));
+ 		       (unsigned long) (diff.tv_usec / USEC_PER_MSEC));
 +#else
 +		printf(" %14s: %llu.%03llu [sec]\n\n", "Total time",
 +		       diff.tv_sec,
-+		       (unsigned long long) (diff.tv_usec/1000));
++		       (unsigned long long) (diff.tv_usec / USEC_PER_MSEC));
 +#endif
  
  		printf(" %14lf usecs/op\n",
@@ -105,11 +105,11 @@ FIXME: regs_load.S need complete x32 ABI support; now it will just compile, but 
 +#if defined(__x86_64__) && !defined(__ILP32__)
  		printf("%lu.%03lu\n",
  		       diff.tv_sec,
- 		       (unsigned long) (diff.tv_usec / 1000));
+ 		       (unsigned long) (diff.tv_usec / USEC_PER_MSEC));
 +#else
 +		printf("%llu.%03llu\n",
 +		       diff.tv_sec,
-+		       (unsigned long long) (diff.tv_usec / 1000));
++		       (unsigned long long) (diff.tv_usec / USEC_PER_MSEC));
 +#endif
  		break;
  

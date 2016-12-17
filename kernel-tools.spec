@@ -20,17 +20,17 @@
 %undefine	with_multilib
 %endif
 
-%define		basever		4.8
-%define		postver		.1
+%define		basever		4.9
+%define		postver		.0
 Summary:	Assortment of tools for the Linux kernel
 Summary(pl.UTF-8):	Zestaw narzędzi dla jądra Linuksa
 Name:		kernel-tools
 Version:	%{basever}%{postver}
-Release:	4
+Release:	1
 License:	GPL v2
 Group:		Applications/System
 Source0:	https://www.kernel.org/pub/linux/kernel/v4.x/linux-%{basever}.tar.xz
-# Source0-md5:	c1af0afbd3df35c1ccdc7a5118cd2d07
+# Source0-md5:	0a68ef3615c64bd5ee54a3320e46667d
 Source1:	cpupower.service
 Source2:	cpupower.config
 %if "%{postver}" != ".0"
@@ -365,7 +365,9 @@ cd linux-%{basever}
 cd linux-%{basever}
 
 # Simple Disk Sleep Monitor
-%{__cc} %{rpmcppflags} %{rpmcflags} %{rpmldflags} Documentation/laptops/dslm.c -o dslm
+%{__make} -C tools/laptop/dslm \
+	%{makeopts} \
+	EXTRA_CFLAGS="%{rpmcflags}"
 
 # tools common (used eg. by tools/vm)
 %{__make} -C tools/lib/api \
@@ -540,7 +542,7 @@ install -p tools/power/cpupower/debug/x86_64/{centrino,powernow-k8}-decode $RPM_
 
 install -d $RPM_BUILD_ROOT{%{_bindir},%{_sbindir},%{_mandir}/man8}
 
-install -p dslm $RPM_BUILD_ROOT%{_sbindir}
+install -p tools/laptop/dslm/dslm $RPM_BUILD_ROOT%{_sbindir}
 
 install -p tools/gpio/lsgpio $RPM_BUILD_ROOT%{_bindir}
 
