@@ -1,0 +1,10 @@
+--- linux-4.12/tools/perf/util/libunwind/x86_32.c.orig	2017-07-03 01:07:02.000000000 +0200
++++ linux-4.12/tools/perf/util/libunwind/x86_32.c	2017-07-13 18:03:18.986458842 +0200
+@@ -25,6 +25,7 @@
+ #include "libunwind-x86.h"
+ #include <../../../../arch/x86/include/uapi/asm/perf_regs.h>
+ 
++#define EINVAL 22
+ /* HAVE_ARCH_X86_64_SUPPORT is used in'arch/x86/util/unwind-libunwind.c'
+  * for x86_32, we undef it to compile code for x86_32 only.
+  */
