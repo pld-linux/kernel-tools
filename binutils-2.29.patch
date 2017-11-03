@@ -1,0 +1,11 @@
+--- linux-4.13/tools/net/bpf_jit_disasm.c.orig	2017-09-03 22:56:17.000000000 +0200
++++ linux-4.13/tools/net/bpf_jit_disasm.c	2017-11-03 22:34:58.128950311 +0100
+@@ -71,7 +71,7 @@
+ 
+ 	disassemble_init_for_target(&info);
+ 
+-	disassemble = disassembler(bfdf);
++	disassemble = disassembler(info.arch, bfd_big_endian(bfdf), info.mach, bfdf);
+ 	assert(disassemble);
+ 
+ 	do {

@@ -21,7 +21,7 @@
 %endif
 
 %define		basever		4.13
-%define		postver		.9
+%define		postver		.11
 Summary:	Assortment of tools for the Linux kernel
 Summary(pl.UTF-8):	Zestaw narzędzi dla jądra Linuksa
 Name:		kernel-tools
@@ -35,11 +35,12 @@ Source1:	cpupower.service
 Source2:	cpupower.config
 %if "%{postver}" != ".0"
 Patch0:		https://www.kernel.org/pub/linux/kernel/v4.x/patch-%{version}.xz
-# Patch0-md5:	65ff24fbf4cbfff46af62393ddc901d9
+# Patch0-md5:	f03030893fae6a5620ba1056a9e3b931
 %endif
 Patch1:		x32.patch
 Patch2:		%{name}-lguest-update.patch
 Patch3:		%{name}-perf-update.patch
+Patch4:		binutils-2.29.patch
 URL:		http://www.kernel.org/
 BuildRequires:	bison
 BuildRequires:	flex
@@ -54,7 +55,7 @@ BuildRequires:	xz
 %if %{with perf}
 BuildRequires:	asciidoc
 BuildRequires:	audit-libs-devel
-BuildRequires:	binutils-devel
+BuildRequires:	binutils-devel >= 4:2.29
 BuildRequires:	docbook-dtd45-xml
 BuildRequires:	docbook-style-xsl
 BuildRequires:	elfutils-devel
@@ -358,6 +359,7 @@ cd linux-%{basever}
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1
 
 %{__sed} -i -e '/^CFLAGS = /s/ -g / $(OPTFLAGS) /' tools/hv/Makefile
 %{__sed} -i -e '/^CFLAGS+=/s/ -O1 / $(OPTFLAGS) /' tools/thermal/tmon/Makefile
@@ -447,9 +449,10 @@ CFLAGS="%{rpmcflags}" \
 %endif
 
 %ifarch %{ix86} %{x8664} x32
+CFLAGS="%{rpmcflags}" \
 %{__make} -C tools/power/x86/x86_energy_perf_policy \
-	CC="%{__cc}" \
-	CFLAGS="%{rpmcflags}"
+	CC="%{__cc}"
+
 CFLAGS="%{rpmcflags}" \
 %{__make} -C tools/power/x86/turbostat \
 	CC="%{__cc}"
