@@ -20,8 +20,8 @@
 %undefine	with_multilib
 %endif
 
-%define		basever		4.13
-%define		postver		.11
+%define		basever		4.14
+%define		postver		.15
 Summary:	Assortment of tools for the Linux kernel
 Summary(pl.UTF-8):	Zestaw narzędzi dla jądra Linuksa
 Name:		kernel-tools
@@ -30,15 +30,14 @@ Release:	1
 License:	GPL v2
 Group:		Applications/System
 Source0:	https://www.kernel.org/pub/linux/kernel/v4.x/linux-%{basever}.tar.xz
-# Source0-md5:	ab1a2abc6f37b752dd2595338bec4e78
+# Source0-md5:	bacdb9ffdcd922aa069a5e1520160e24
 Source1:	cpupower.service
 Source2:	cpupower.config
 %if "%{postver}" != ".0"
 Patch0:		https://www.kernel.org/pub/linux/kernel/v4.x/patch-%{version}.xz
-# Patch0-md5:	f03030893fae6a5620ba1056a9e3b931
+# Patch0-md5:	de16c219ce4548d63ff7d6c670340a9e
 %endif
 Patch1:		x32.patch
-Patch2:		%{name}-lguest-update.patch
 Patch3:		%{name}-perf-update.patch
 Patch4:		binutils-2.29.patch
 URL:		http://www.kernel.org/
@@ -357,7 +356,6 @@ cd linux-%{basever}
 %endif
 
 %patch1 -p1
-%patch2 -p1
 %patch3 -p1
 %patch4 -p1
 
@@ -391,19 +389,12 @@ CFLAGS="%{rpmcflags}" \
 %endif
 
 CFLAGS="%{rpmcflags}" \
-%{__make} -C tools/iio \
+%{__make} -C tools/iio -j1 \
 	CC="%{__cc}"
 
 %{__make} -C tools/laptop/freefall \
 	CC="%{__cc}" \
 	CFLAGS="%{rpmcflags}"
-
-%ifarch %{ix86}
-# drivers/lguest is x86-32 only
-%{__make} -C tools/lguest \
-	CC="%{__cc}" \
-	CFLAGS="%{rpmcflags} -Wall -U_FORTIFY_SOURCE -Iinclude"
-%endif
 
 CFLAGS="%{rpmcflags}" \
 %{__make} -C tools/net \
@@ -562,10 +553,6 @@ install -p tools/iio/{iio_event_monitor,iio_generic_buffer,lsiio} $RPM_BUILD_ROO
 
 install -p tools/laptop/freefall/freefall $RPM_BUILD_ROOT%{_sbindir}
 
-%ifarch %{ix86}
-install -p tools/lguest/lguest $RPM_BUILD_ROOT%{_bindir}
-%endif
-
 install -p tools/net/{bpf_asm,bpf_dbg,bpf_jit_disasm} $RPM_BUILD_ROOT%{_bindir}
 
 install -p tools/thermal/tmon/tmon $RPM_BUILD_ROOT%{_bindir}
@@ -620,10 +607,6 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_sbindir}/freefall
 %attr(755,root,root) %{_sbindir}/page-types
 %{_mandir}/man8/tmon.8*
-%ifarch %{ix86}
-%doc linux-%{basever}/tools/lguest/lguest.txt
-%attr(755,root,root) %{_bindir}/lguest
-%endif
 %ifarch %{ix86} %{x8664} x32
 %attr(755,root,root) %{_bindir}/centrino-decode
 %attr(755,root,root) %{_bindir}/powernow-k8-decode
