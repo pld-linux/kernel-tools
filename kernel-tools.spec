@@ -20,8 +20,8 @@
 %undefine	with_multilib
 %endif
 
-%define		basever		4.14
-%define		postver		.15
+%define		basever		4.15
+%define		postver		.0
 Summary:	Assortment of tools for the Linux kernel
 Summary(pl.UTF-8):	Zestaw narzędzi dla jądra Linuksa
 Name:		kernel-tools
@@ -30,7 +30,7 @@ Release:	1
 License:	GPL v2
 Group:		Applications/System
 Source0:	https://www.kernel.org/pub/linux/kernel/v4.x/linux-%{basever}.tar.xz
-# Source0-md5:	bacdb9ffdcd922aa069a5e1520160e24
+# Source0-md5:	0d701ac1e2a67d47ce7127432df2c32b
 Source1:	cpupower.service
 Source2:	cpupower.config
 %if "%{postver}" != ".0"
@@ -48,7 +48,7 @@ BuildRequires:	linux-libc-headers >= 7:4.12
 BuildRequires:	ncurses-devel
 BuildRequires:	pciutils-devel
 BuildRequires:	pkgconfig
-BuildRequires:	rpmbuild(macros) >= 1.647
+BuildRequires:	rpmbuild(macros) >= 1.673
 BuildRequires:	tar >= 1:1.22
 BuildRequires:	xz
 %if %{with perf}
@@ -255,7 +255,7 @@ Ten pakiet zawiera graficzny interfejs oparty na GTK+ 2.
 Summary:	Bash completion for perf command
 Summary(pl.UTF-8):	Bashowe uzupełnianie parametrów dla polecenia perf
 Group:		Applications/Shells
-Requires:	%{name}-perf
+Requires:	%{name}-perf = %{version}-%{release}
 Requires:	bash-completion
 %if "%{_rpmversion}" >= "5"
 BuildArch:	noarch
@@ -266,6 +266,23 @@ Bash completion for perf command.
 
 %description -n bash-completion-perf -l pl.UTF-8
 Bashowe uzupełnianie parametrów dla polecenia perf.
+
+%package -n bash-completion-kernel-tools
+Summary:	Bash completion for kernel-tools commands
+Summary(pl.UTF-8):	Bashowe uzupełnianie parametrów dla poleceń kernel-tools
+Group:		Applications/Shells
+Requires:	%{name} = %{version}-%{release}
+Requires:	bash-completion >= 2.0
+%if "%{_rpmversion}" >= "5"
+BuildArch:	noarch
+%endif
+
+%description -n bash-completion-kernel-tools
+Bash completion for kernel-tools commands (currently bpftool).
+
+%description -n bash-completion-kernel-tools -l pl.UTF-8
+Bashowe uzupełnianie parametrów dla poleceń kernel-tools (obecnie
+bpftool).
 
 %package -n usbip
 Summary:	USB device sharing system over IP network
@@ -361,7 +378,7 @@ cd linux-%{basever}
 
 %{__sed} -i -e '/^CFLAGS = /s/ -g / $(OPTFLAGS) /' tools/hv/Makefile
 %{__sed} -i -e '/^CFLAGS+=/s/ -O1 / $(OPTFLAGS) /' tools/thermal/tmon/Makefile
-%{__sed} -i -e 's#libexec/perf-core#%{_datadir}/perf-core#g' tools/perf/Makefile.config
+%{__sed} -i -e 's#libexec/perf-core#share/perf-core#g' tools/perf/Makefile.config
 
 %build
 cd linux-%{basever}
@@ -397,7 +414,7 @@ CFLAGS="%{rpmcflags}" \
 	CFLAGS="%{rpmcflags}"
 
 CFLAGS="%{rpmcflags}" \
-%{__make} -C tools/net \
+%{__make} -C tools/bpf \
 	CC="%{__cc}"
 
 # perf
@@ -553,7 +570,11 @@ install -p tools/iio/{iio_event_monitor,iio_generic_buffer,lsiio} $RPM_BUILD_ROO
 
 install -p tools/laptop/freefall/freefall $RPM_BUILD_ROOT%{_sbindir}
 
-install -p tools/net/{bpf_asm,bpf_dbg,bpf_jit_disasm} $RPM_BUILD_ROOT%{_bindir}
+%{__make} -C tools/bpf install \
+	prefix=$RPM_BUILD_ROOT%{_prefix} \
+	bash_compdir=$RPM_BUILD_ROOT%{bash_compdir}
+%{__make} -C tools/bpf/bpftool doc-install \
+	prefix=$RPM_BUILD_ROOT%{_prefix}
 
 install -p tools/thermal/tmon/tmon $RPM_BUILD_ROOT%{_bindir}
 cp -p tools/thermal/tmon/tmon.8 $RPM_BUILD_ROOT%{_mandir}/man8
@@ -603,9 +624,11 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/lsiio
 %attr(755,root,root) %{_bindir}/slabinfo
 %attr(755,root,root) %{_bindir}/tmon
+%attr(755,root,root) %{_sbindir}/bpftool
 %attr(755,root,root) %{_sbindir}/dslm
 %attr(755,root,root) %{_sbindir}/freefall
 %attr(755,root,root) %{_sbindir}/page-types
+%{_mandir}/man8/bpftool*.8*
 %{_mandir}/man8/tmon.8*
 %ifarch %{ix86} %{x8664} x32
 %attr(755,root,root) %{_bindir}/centrino-decode
@@ -653,9 +676,11 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/perf
 %attr(755,root,root) %{_bindir}/trace
 %{_mandir}/man1/perf*.1*
+%{_docdir}/perf-tip
 %dir %{_datadir}/perf-core
 %attr(755,root,root) %{_datadir}/perf-core/perf-archive
 %attr(755,root,root) %{_datadir}/perf-core/perf-with-kcore
+%{_datadir}/perf-core/strace
 
 %dir %{_datadir}/perf-core/scripts
 
@@ -703,6 +728,10 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 /etc/bash_completion.d/perf
 %endif
+
+%files -n bash-completion-kernel-tools
+%defattr(644,root,root,755)
+%{bash_compdir}/bpftool
 
 %if %{with usbip}
 %files -n usbip
