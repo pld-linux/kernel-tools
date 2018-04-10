@@ -20,26 +20,25 @@
 %undefine	with_multilib
 %endif
 
-%define		basever		4.15
-%define		postver		.0
+%define		basever		4.16
+%define		postver		.1
 Summary:	Assortment of tools for the Linux kernel
 Summary(pl.UTF-8):	Zestaw narzędzi dla jądra Linuksa
 Name:		kernel-tools
 Version:	%{basever}%{postver}
-Release:	2
+Release:	1
 License:	GPL v2
 Group:		Applications/System
 Source0:	https://www.kernel.org/pub/linux/kernel/v4.x/linux-%{basever}.tar.xz
-# Source0-md5:	0d701ac1e2a67d47ce7127432df2c32b
+# Source0-md5:	1357fb4ee7c288fdeac5d4e0048f5c18
 Source1:	cpupower.service
 Source2:	cpupower.config
 %if "%{postver}" != ".0"
 Patch0:		https://www.kernel.org/pub/linux/kernel/v4.x/patch-%{version}.xz
-# Patch0-md5:	de16c219ce4548d63ff7d6c670340a9e
+# Patch0-md5:	bade764e616e8283b6a620f268337651
 %endif
 Patch1:		x32.patch
 Patch3:		%{name}-perf-update.patch
-Patch4:		binutils-2.29.patch
 URL:		http://www.kernel.org/
 BuildRequires:	bison
 BuildRequires:	flex
@@ -374,11 +373,13 @@ cd linux-%{basever}
 
 %patch1 -p1
 %patch3 -p1
-%patch4 -p1
 
 %{__sed} -i -e '/^CFLAGS = /s/ -g / $(OPTFLAGS) /' tools/hv/Makefile
 %{__sed} -i -e '/^CFLAGS+=/s/ -O1 / $(OPTFLAGS) /' tools/thermal/tmon/Makefile
 %{__sed} -i -e 's#libexec/perf-core#share/perf-core#g' tools/perf/Makefile.config
+
+# don't rebuild on make install
+%{__sed} -i -e '/^\$(LIBBPF): FORCE/ s/FORCE$//' tools/bpf/bpftool/Makefile
 
 %build
 cd linux-%{basever}
@@ -407,7 +408,8 @@ CFLAGS="%{rpmcflags}" \
 
 CFLAGS="%{rpmcflags}" \
 %{__make} -C tools/iio -j1 \
-	CC="%{__cc}"
+	CC="%{__cc}" \
+	%{?with_verbose:V=1}
 
 %{__make} -C tools/laptop/freefall \
 	CC="%{__cc}" \
@@ -415,7 +417,9 @@ CFLAGS="%{rpmcflags}" \
 
 CFLAGS="%{rpmcflags}" \
 %{__make} -C tools/bpf \
-	CC="%{__cc}"
+	CC="%{__cc}" \
+	EXTRA_CFLAGS="%{rpmcflags}" \
+	%{?with_verbose:V=1}
 
 # perf
 %if %{with perf}
@@ -572,9 +576,12 @@ install -p tools/laptop/freefall/freefall $RPM_BUILD_ROOT%{_sbindir}
 
 %{__make} -C tools/bpf install \
 	prefix=$RPM_BUILD_ROOT%{_prefix} \
-	bash_compdir=$RPM_BUILD_ROOT%{bash_compdir}
+	bash_compdir=$RPM_BUILD_ROOT%{bash_compdir} \
+	%{?with_verbose:V=1}
 %{__make} -C tools/bpf/bpftool doc-install \
-	prefix=$RPM_BUILD_ROOT%{_prefix}
+	prefix=$RPM_BUILD_ROOT%{_prefix} \
+	mandir=$RPM_BUILD_ROOT%{_mandir} \
+	%{?with_verbose:V=1}
 
 install -p tools/thermal/tmon/tmon $RPM_BUILD_ROOT%{_bindir}
 cp -p tools/thermal/tmon/tmon.8 $RPM_BUILD_ROOT%{_mandir}/man8
