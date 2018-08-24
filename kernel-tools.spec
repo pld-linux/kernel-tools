@@ -20,8 +20,8 @@
 %undefine	with_multilib
 %endif
 
-%define		basever		4.16
-%define		postver		.1
+%define		basever		4.18
+%define		postver		.4
 Summary:	Assortment of tools for the Linux kernel
 Summary(pl.UTF-8):	Zestaw narzędzi dla jądra Linuksa
 Name:		kernel-tools
@@ -30,12 +30,12 @@ Release:	3
 License:	GPL v2
 Group:		Applications/System
 Source0:	https://www.kernel.org/pub/linux/kernel/v4.x/linux-%{basever}.tar.xz
-# Source0-md5:	1357fb4ee7c288fdeac5d4e0048f5c18
+# Source0-md5:	bee5fe53ee1c3142b8f0c12c0d3348f9
 Source1:	cpupower.service
 Source2:	cpupower.config
 %if "%{postver}" != ".0"
 Patch0:		https://www.kernel.org/pub/linux/kernel/v4.x/patch-%{version}.xz
-# Patch0-md5:	bade764e616e8283b6a620f268337651
+# Patch0-md5:	eff3af043f7cfc0cd0bb57d70b8da618
 %endif
 Patch1:		x32.patch
 Patch3:		%{name}-perf-update.patch
@@ -414,6 +414,12 @@ CFLAGS="%{rpmcflags}" \
 %{__make} -C tools/laptop/freefall \
 	CC="%{__cc}" \
 	CFLAGS="%{rpmcflags}"
+
+# make bpftool first, top-level bpf CFLAGS cause includes conflict
+CFLAGS="%{rpmcflags}" \
+%{__make} -C tools/bpf/bpftool \
+	CC="%{__cc}" \
+	%{?with_verbose:V=1}
 
 CFLAGS="%{rpmcflags}" \
 %{__make} -C tools/bpf \
