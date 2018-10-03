@@ -41,6 +41,7 @@ Patch1:		x32.patch
 Patch3:		%{name}-perf-update.patch
 URL:		http://www.kernel.org/
 BuildRequires:	bison
+BuildRequires:	docutils
 BuildRequires:	flex
 BuildRequires:	gettext-tools
 BuildRequires:	linux-libc-headers >= 7:4.12
