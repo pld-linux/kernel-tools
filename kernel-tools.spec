@@ -49,6 +49,8 @@ BuildRequires:	ncurses-devel
 BuildRequires:	ncurses-ext-devel
 BuildRequires:	pciutils-devel
 BuildRequires:	pkgconfig
+BuildRequires:	python3
+BuildRequires:	python3-modules
 BuildRequires:	rpmbuild(macros) >= 1.673
 BuildRequires:	tar >= 1:1.22
 BuildRequires:	xz
