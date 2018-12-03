@@ -46,6 +46,7 @@ BuildRequires:	flex
 BuildRequires:	gettext-tools
 BuildRequires:	linux-libc-headers >= 7:4.12
 BuildRequires:	ncurses-devel
+BuildRequires:	ncurses-ext-devel
 BuildRequires:	pciutils-devel
 BuildRequires:	pkgconfig
 BuildRequires:	rpmbuild(macros) >= 1.673
