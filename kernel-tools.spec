@@ -645,6 +645,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_sbindir}/dslm
 %attr(755,root,root) %{_sbindir}/freefall
 %attr(755,root,root) %{_sbindir}/page-types
+%{_mandir}/man7/bpf-helpers.7*
 %{_mandir}/man8/bpftool*.8*
 %{_mandir}/man8/tmon.8*
 %ifarch %{ix86} %{x8664} x32
@@ -724,6 +725,10 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{_libdir}/traceevent
 %dir %{_libdir}/traceevent/plugins
 %attr(755,root,root) %{_libdir}/traceevent/plugins/plugin_*.so
+
+%dir %{_prefix}/lib/perf
+%{_prefix}/lib/perf/examples
+%{_prefix}/lib/perf/include
 
 %if %{with multilib}
 %files perf-vdso32
