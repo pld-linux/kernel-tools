@@ -8,3 +8,14 @@
  /* HAVE_ARCH_X86_64_SUPPORT is used in'arch/x86/util/unwind-libunwind.c'
   * for x86_32, we undef it to compile code for x86_32 only.
   */
+--- linux-4.19/tools/perf/arch/x86/tests/arch-tests.c.orig	2018-10-22 08:37:37.000000000 +0200
++++ linux-4.19/tools/perf/arch/x86/tests/arch-tests.c	2018-12-19 21:33:34.463629513 +0100
+@@ -24,7 +24,7 @@
+ 		.func = test__insn_x86,
+ 	},
+ #endif
+-#if defined(__x86_64__)
++#if defined(__x86_64__) && !defined(__ILP32__)
+ 	{
+ 		.desc = "x86 bp modify",
+ 		.func = test__bp_modify,
