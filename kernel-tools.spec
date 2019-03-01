@@ -21,7 +21,7 @@
 %endif
 
 %define		basever		4.19
-%define		postver		.6
+%define		postver		.26
 Summary:	Assortment of tools for the Linux kernel
 Summary(pl.UTF-8):	Zestaw narzędzi dla jądra Linuksa
 Name:		kernel-tools
@@ -35,7 +35,7 @@ Source1:	cpupower.service
 Source2:	cpupower.config
 %if "%{postver}" != ".0"
 Patch0:		https://www.kernel.org/pub/linux/kernel/v4.x/patch-%{version}.xz
-# Patch0-md5:	62b3734bb12b9a74b6b484f877493c41
+# Patch0-md5:	c03985e05f145c7a94f90181b9d1e6cb
 %endif
 Patch1:		x32.patch
 Patch3:		%{name}-perf-update.patch
