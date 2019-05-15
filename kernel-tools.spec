@@ -21,7 +21,7 @@
 %endif
 
 %define		basever		4.19
-%define		postver		.26
+%define		postver		.43
 Summary:	Assortment of tools for the Linux kernel
 Summary(pl.UTF-8):	Zestaw narzędzi dla jądra Linuksa
 Name:		kernel-tools
@@ -35,7 +35,7 @@ Source1:	cpupower.service
 Source2:	cpupower.config
 %if "%{postver}" != ".0"
 Patch0:		https://www.kernel.org/pub/linux/kernel/v4.x/patch-%{version}.xz
-# Patch0-md5:	c03985e05f145c7a94f90181b9d1e6cb
+# Patch0-md5:	de59f616dfe3f55ee03ccb06e59481ef
 %endif
 Patch1:		x32.patch
 Patch3:		%{name}-perf-update.patch
@@ -611,6 +611,8 @@ install -d $RPM_BUILD_ROOT%{_mandir}/man8
 # gen_init_cpio
 install -p usr/gen_init_cpio $RPM_BUILD_ROOT%{_bindir}/gen_init_cpio
 
+rm -f $RPM_BUILD_ROOT%{_mandir}/man7/bpf-helpers.7*
+
 %clean
 rm -rf $RPM_BUILD_ROOT
 
@@ -645,7 +647,6 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_sbindir}/dslm
 %attr(755,root,root) %{_sbindir}/freefall
 %attr(755,root,root) %{_sbindir}/page-types
-%{_mandir}/man7/bpf-helpers.7*
 %{_mandir}/man8/bpftool*.8*
 %{_mandir}/man8/tmon.8*
 %ifarch %{ix86} %{x8664} x32
