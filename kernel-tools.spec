@@ -13,9 +13,6 @@
 %bcond_without	multilib	# multilib perf support
 %bcond_without	usbip		# usbip utils
 
-%ifarch x32
-%undefine	with_libunwind
-%endif
 %ifnarch %{x8664}
 %undefine	with_multilib
 %endif
@@ -38,6 +35,7 @@ Patch0:		https://www.kernel.org/pub/linux/kernel/v5.x/patch-%{version}.xz
 # Patch0-md5:	06ee36333ce2f480ae848320790cebc1
 %endif
 Patch1:		x32.patch
+Patch2:		regex.patch
 Patch3:		%{name}-perf-update.patch
 URL:		http://www.kernel.org/
 BuildRequires:	bison
@@ -143,6 +141,22 @@ Development files for the cpupower library.
 
 %description cpupower-libs-devel -l pl.UTF-8
 Pliki programistyczne biblioteki cpupower.
+
+%package -n bash-completion-cpupower
+Summary:	Bash completion for cpupower tools
+Summary(pl.UTF-8):	Bashowe uzupełnianie parametrów dla poleceń cpupower
+Group:		Applications/Shells
+Requires:	%{name}-cpupower = %{version}-%{release}
+Requires:	bash-completion
+%if "%{_rpmversion}" >= "5"
+BuildArch:	noarch
+%endif
+
+%description -n bash-completion-cpupower
+Bash completion for cpupower tools.
+
+%description -n bash-completion-cpupower -l pl.UTF-8
+Bashowe uzupełnianie parametrów dla poleceń cpupower.
 
 %package hv
 Summary:	Hyper-V virtualization tools
@@ -376,6 +390,7 @@ cd linux-%{basever}
 %endif
 
 %patch1 -p1
+%patch2 -p1
 %patch3 -p1
 
 %{__sed} -i -e '/^CFLAGS = /s/ -g / $(OPTFLAGS) /' tools/hv/Makefile
@@ -433,7 +448,7 @@ CFLAGS="%{rpmcflags}" \
 
 # perf
 %if %{with perf}
-%{__make} -C tools/perf all man \
+%{__make} -j1 -C tools/perf all man \
 %ifarch %{x8664}
 	IS_X86_64=1 \
 	%{!?with_multilib:NO_PERF_READ_VDSO32=1 NO_PERF_READ_VDSOX32=1} \
@@ -537,7 +552,7 @@ install -p tools/power/cpupower/debug/x86_64/{centrino,powernow-k8}-decode $RPM_
 %endif
 
 %if %{with perf}
-%{__make} -C tools/perf -j1 install install-man \
+%{__make} -C tools/perf install install-man \
 %ifarch %{x8664}
 	IS_X86_64=1 \
 	%{!?with_multilib:NO_PERF_READ_VDSO32=1 NO_PERF_READ_VDSOX32=1} \
@@ -551,6 +566,7 @@ install -p tools/power/cpupower/debug/x86_64/{centrino,powernow-k8}-decode $RPM_
 	prefix=%{_prefix} \
 	perfexecdir=%{_datadir}/perf-core \
 	template_dir=%{_datadir}/perf-core/templates \
+	bash_compdir=%{bash_compdir} \
 	lib=%{_lib} \
 	DESTDIR=$RPM_BUILD_ROOT
 
@@ -677,6 +693,10 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/libcpupower.so
 %{_includedir}/cpufreq.h
 %{_includedir}/cpuidle.h
+
+%files -n bash-completion-cpupower
+%defattr(644,root,root,755)
+%{bash_compdir}/cpupower
 
 %ifarch %{ix86} %{x8664} x32
 %files hv

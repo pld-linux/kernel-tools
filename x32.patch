@@ -18,12 +18,14 @@ FIXME: regs_load.S need complete x32 ABI support; now it will just compile, but 
 +endif
 --- linux-4.8/tools/perf/Makefile.config~	2015-04-11 12:12:31.000000000 +0200
 +++ linux-4.8/tools/perf/Makefile.config	2015-04-11 12:19:05.011244885 +0200
-@@ -41,6 +41,9 @@
+@@ -41,6 +41,11 @@
      LIBUNWIND_LIBS = -lunwind-x86 -llzma -lunwind
    endif
    NO_PERF_REGS := 0
 +  ifeq (${IS_X32_BIT}, 1)
 +    CFLAGS += -DHAVE_ARCH_X32_SUPPORT
++    ARCH_INCLUDE = ../../arch/x86/lib/memcpy_64.S ../../arch/x86/lib/memset_64.S
++    LIBUNWIND_LIBS = -lunwind-x86_64 -llzma -lunwind
 +  endif
  endif
  
@@ -128,3 +130,14 @@ FIXME: regs_load.S need complete x32 ABI support; now it will just compile, but 
  	} else
  		pr_info("00:00:00.000000");
  
+--- linux-5.1/tools/perf/arch/x86/util/unwind-libunwind.c.orig	2019-05-06 02:42:58.000000000 +0200
++++ linux-5.1/tools/perf/arch/x86/util/unwind-libunwind.c	2019-05-18 12:32:31.916685600 +0200
+@@ -8,7 +8,7 @@
+ #include "../../util/debug.h"
+ #endif
+ 
+-#ifdef HAVE_ARCH_X86_64_SUPPORT
++#if defined(HAVE_ARCH_X86_64_SUPPORT) || defined(HAVE_ARCH_X32_SUPPORT)
+ int LIBUNWIND__ARCH_REG_ID(int regnum)
+ {
+ 	int id;
