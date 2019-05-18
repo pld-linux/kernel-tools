@@ -114,20 +114,6 @@ FIXME: regs_load.S need complete x32 ABI support; now it will just compile, but 
  		break;
  
  	default:
---- linux-3.19/tools/perf/builtin-stat.c~	2015-02-09 03:54:22.000000000 +0100
-+++ linux-3.19/tools/perf/builtin-stat.c	2015-04-11 12:35:21.841251509 +0200
-@@ -550,7 +550,11 @@
- {
- 	static int num_print_interval;
- 
-+#if defined(__x86_64__) && !defined(__ILP32__)
- 	sprintf(prefix, "%6lu.%09lu%s", ts->tv_sec, ts->tv_nsec, csv_sep);
-+#else
-+	sprintf(prefix, "%6llu.%09llu%s", ts->tv_sec, ts->tv_nsec, csv_sep);
-+#endif
- 
- 	if (num_print_interval == 0 && !csv_output) {
- 		switch (aggr_mode) {
 --- linux-3.19/tools/perf/builtin-kvm.c~	2015-02-09 03:54:22.000000000 +0100
 +++ linux-3.19/tools/perf/builtin-kvm.c	2015-04-11 12:36:00.511251770 +0200
 @@ -565,7 +565,11 @@
