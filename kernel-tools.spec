@@ -17,27 +17,28 @@
 %undefine	with_multilib
 %endif
 
-%define		basever		5.1
-%define		postver		.3
+%define		basever		5.3
+%define		postver		.1
 Summary:	Assortment of tools for the Linux kernel
 Summary(pl.UTF-8):	Zestaw narzędzi dla jądra Linuksa
 Name:		kernel-tools
 Version:	%{basever}%{postver}
-Release:	2
+Release:	1
 License:	GPL v2
 Group:		Applications/System
 Source0:	https://www.kernel.org/pub/linux/kernel/v5.x/linux-%{basever}.tar.xz
-# Source0-md5:	15fbdff95ff98483069ac6e215b9f4f9
+# Source0-md5:	c99feaade8047339528fb066ec5f8a49
 Source1:	cpupower.service
 Source2:	cpupower.config
 %if "%{postver}" != ".0"
 Patch0:		https://www.kernel.org/pub/linux/kernel/v5.x/patch-%{version}.xz
-# Patch0-md5:	06ee36333ce2f480ae848320790cebc1
+# Patch0-md5:	476673d3ab1470fd9bac0da60774f3fd
 %endif
 Patch1:		x32.patch
 Patch2:		regex.patch
 Patch3:		%{name}-perf-update.patch
-URL:		http://www.kernel.org/
+Patch4:		%{name}-perf-gtk2.patch
+URL:		https://www.kernel.org/
 BuildRequires:	bison
 BuildRequires:	docutils
 BuildRequires:	flex
@@ -55,21 +56,27 @@ BuildRequires:	xz
 %if %{with perf}
 BuildRequires:	asciidoc
 BuildRequires:	audit-libs-devel
+BuildRequires:	babeltrace-devel
 BuildRequires:	binutils-devel >= 4:2.29
 BuildRequires:	docbook-dtd45-xml
 BuildRequires:	docbook-style-xsl
-BuildRequires:	elfutils-devel
+BuildRequires:	elfutils-devel >= 0.158
 %if %{with multilib}
 BuildRequires:	gcc-multilib-32
 BuildRequires:	gcc-multilib-x32
 %endif
 %{?with_libunwind:BuildRequires:	libunwind-devel >= 0.99}
 BuildRequires:	numactl-devel
+BuildRequires:	openssl-devel
 BuildRequires:	perl-devel >= 5.1
 BuildRequires:	python-devel
 BuildRequires:	rpm-pythonprov
 BuildRequires:	slang-devel
 BuildRequires:	xmlto
+BuildRequires:	xz-devel
+BuildRequires:	zlib-devel
+BuildRequires:	zstd-devel
+# openscd? (CORESIGHT=1 for %{arm}?)
 %if %{with gtk}
 BuildRequires:	gtk+2-devel >= 2.0
 %endif
@@ -392,6 +399,7 @@ cd linux-%{basever}
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1
 
 %{__sed} -i -e '/^CFLAGS = /s/ -g / $(OPTFLAGS) /' tools/hv/Makefile
 %{__sed} -i -e '/^CFLAGS+=/s/ -O1 / $(OPTFLAGS) /' tools/thermal/tmon/Makefile
@@ -401,6 +409,14 @@ cd linux-%{basever}
 %{__sed} -i -e '/^\$(LIBBPF): FORCE/ s/FORCE$//' tools/bpf/bpftool/Makefile
 
 %build
+Wstringop=""
+Waddressof=""
+%if "%{cc_version}" >= "8"
+Wstringop="-Wno-error=stringop-truncation"
+%endif
+%if "%{cc_version}" >= "9"
+Waddressof="-Wno-error=address-of-packed-member"
+%endif
 cd linux-%{basever}
 
 # Simple Disk Sleep Monitor
@@ -411,7 +427,7 @@ cd linux-%{basever}
 # tools common (used eg. by tools/vm)
 %{__make} -C tools/lib/api \
 	%{makeopts} \
-	EXTRA_CFLAGS="%{rpmcflags}"
+	EXTRA_CFLAGS="%{rpmcflags} $Wstringop"
 
 # lsgpio
 CFLAGS="%{rpmcflags}" \
@@ -508,6 +524,7 @@ cd tools/usb/usbip
 %{__autoheader}
 %{__automake}
 %configure \
+	CFLAGS="%{rpmcflags} $Wstringop $Waddressof" \
 	--disable-silent-rules \
 	--with-usbids-dir=/lib/hwdata
 %{__make}
@@ -537,7 +554,7 @@ cd linux-%{basever}
 	CPUFREQ_BENCH=false
 
 %find_lang cpupower
-mv cpupower.lang ..
+%{__mv} cpupower.lang ..
 
 install -d $RPM_BUILD_ROOT{/etc/sysconfig,%{systemdunitdir}}
 cp -p %{SOURCE1} $RPM_BUILD_ROOT%{systemdunitdir}/cpupower.service
@@ -627,7 +644,8 @@ install -d $RPM_BUILD_ROOT%{_mandir}/man8
 # gen_init_cpio
 install -p usr/gen_init_cpio $RPM_BUILD_ROOT%{_bindir}/gen_init_cpio
 
-rm -f $RPM_BUILD_ROOT%{_mandir}/man7/bpf-helpers.7*
+# packaged in man-pages (5.02)
+%{__rm} $RPM_BUILD_ROOT%{_mandir}/man7/bpf-helpers.7*
 
 %clean
 rm -rf $RPM_BUILD_ROOT
