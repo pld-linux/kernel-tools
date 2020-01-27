@@ -17,8 +17,8 @@
 %undefine	with_multilib
 %endif
 
-%define		basever		5.4
-%define		postver		.2
+%define		basever		5.5
+%define		postver		.0
 Summary:	Assortment of tools for the Linux kernel
 Summary(pl.UTF-8):	Zestaw narzędzi dla jądra Linuksa
 Name:		kernel-tools
@@ -27,7 +27,7 @@ Release:	1
 License:	GPL v2
 Group:		Applications/System
 Source0:	https://www.kernel.org/pub/linux/kernel/v5.x/linux-%{basever}.tar.xz
-# Source0-md5:	ce9b2d974d27408a61c53a30d3f98fb9
+# Source0-md5:	0a78b1dc48dc032fe505b170c1b92339
 Source1:	cpupower.service
 Source2:	cpupower.config
 %if "%{postver}" != ".0"

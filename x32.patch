@@ -30,12 +30,12 @@ FIXME: regs_load.S need complete x32 ABI support; now it will just compile, but 
  endif
  
  ifeq ($(ARCH),arm)
---- linux-3.19/tools/perf/arch/x86/tests/regs_load.S~	2015-02-09 03:54:22.000000000 +0100
-+++ linux-3.19/tools/perf/arch/x86/tests/regs_load.S	2015-04-11 12:21:07.717912384 +0200
-@@ -62,14 +62,20 @@
- ENDPROC(perf_regs_load)
+--- linux-5.5/tools/perf/arch/x86/tests/regs_load.S.orig	2020-01-27 20:52:02.819752368 +0100
++++ linux-5.5/tools/perf/arch/x86/tests/regs_load.S	2020-01-27 20:56:05.908435444 +0100
+@@ -63,14 +63,20 @@
+ SYM_FUNC_END(perf_regs_load)
  #else
- ENTRY(perf_regs_load)
+ SYM_FUNC_START(perf_regs_load)
 -	push %edi
 +#ifdef HAVE_ARCH_X32_SUPPORT
 +#else
