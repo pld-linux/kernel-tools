@@ -1,0 +1,18 @@
+--- linux-5.5/tools/perf/util/srcline.c~	2020-01-27 01:23:03.000000000 +0100
++++ linux-5.5/tools/perf/util/srcline.c	2020-03-24 22:05:05.941464830 +0100
+@@ -197,12 +197,12 @@
+ 	if (a2l->found)
+ 		return;
+ 
+-	if ((bfd_get_section_flags(abfd, section) & SEC_ALLOC) == 0)
++	if ((bfd_section_flags(section) & SEC_ALLOC) == 0)
+ 		return;
+ 
+ 	pc = a2l->addr;
+-	vma = bfd_get_section_vma(abfd, section);
+-	size = bfd_get_section_size(section);
++	vma = bfd_section_vma(section);
++	size = bfd_section_size(section);
+ 
+ 	if (pc < vma || pc >= vma + size)
+ 		return;
