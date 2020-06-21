@@ -1,0 +1,24 @@
+Fix broken hashmap implementation to ensure that hash_bits returns value fitting in
+given bits (for bits > 0): multiplier is long long, so shift bits must be based on
+long long, not __WORDSIZE.
+--- linux-5.7/tools/lib/bpf/hashmap.h.orig	2020-06-01 01:49:15.000000000 +0200
++++ linux-5.7/tools/lib/bpf/hashmap.h	2020-06-21 15:22:07.298466419 +0200
+@@ -10,17 +10,12 @@
+ 
+ #include <stdbool.h>
+ #include <stddef.h>
+-#ifdef __GLIBC__
+-#include <bits/wordsize.h>
+-#else
+-#include <bits/reg.h>
+-#endif
+ #include "libbpf_internal.h"
+ 
+ static inline size_t hash_bits(size_t h, int bits)
+ {
+ 	/* shuffle bits and return requested number of upper bits */
+-	return (h * 11400714819323198485llu) >> (__WORDSIZE - bits);
++	return (h * 11400714819323198485llu) >> (__SIZEOF_LONG_LONG__ * 8 - bits);
+ }
+ 
+ typedef size_t (*hashmap_hash_fn)(const void *key, void *ctx);
