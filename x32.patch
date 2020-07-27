@@ -1,17 +1,18 @@
 FIXME: regs_load.S need complete x32 ABI support; now it will just compile, but tests won't run properly.
 --- linux-4.7/tools/scripts/Makefile.arch~	2015-02-09 03:54:22.000000000 +0100
 +++ linux-4.7/tools/scripts/Makefile.arch	2015-04-11 12:17:45.107911011 +0200
-@@ -24,8 +24,14 @@
+@@ -24,8 +24,15 @@
  ARCH ?= $(RAW_ARCH)
  
  LP64 := $(shell echo __LP64__ | ${CC} ${CFLAGS} -E -x c - | tail -n 1)
 +ILP32 := $(shell echo __ILP32__ | ${CC} ${CFLAGS} -E -x c - | tail -n 1)
++X86_64 := $(shell echo __x86_64__ | ${CC} ${CFLAGS} -E -x c - | tail -n 1)
  ifeq ($(LP64), 1)
    IS_64_BIT := 1
  else
    IS_64_BIT := 0
  endif
-+ifeq ($(ILP32), 1)
++ifeq ($(x86_64)_$(ILP32), 1_1)
 +  IS_X32_BIT := 1
 +else
 +  IS_X32_BIT := 0
