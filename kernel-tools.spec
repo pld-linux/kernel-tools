@@ -25,7 +25,7 @@ Summary:	Assortment of tools for the Linux kernel
 Summary(pl.UTF-8):	Zestaw narzędzi dla jądra Linuksa
 Name:		kernel-tools
 Version:	%{basever}%{postver}
-Release:	2
+Release:	3
 License:	GPL v2
 Group:		Applications/System
 Source0:	https://www.kernel.org/pub/linux/kernel/v5.x/linux-%{basever}.tar.xz
@@ -43,6 +43,7 @@ Patch4:		%{name}-perf-gtk2.patch
 Patch5:		%{name}-bpf-hashmap-upstream.patch
 Patch6:		%{name}-bpf-hashmap.patch
 Patch7:		%{name}-usbip-nocommon.patch
+Patch8:		%{name}-binutils2.35.patch
 URL:		https://www.kernel.org/
 BuildRequires:	bison
 BuildRequires:	docutils
@@ -410,6 +411,7 @@ cd linux-%{basever}
 %patch5 -p1
 %patch6 -p1
 %patch7 -p1
+%patch8 -p1
 
 %{__sed} -i -e '/^CFLAGS = /s/ -g / $(OPTFLAGS) /' tools/hv/Makefile
 %{__sed} -i -e '/^CFLAGS+=/s/ -O1 / $(OPTFLAGS) /' tools/thermal/tmon/Makefile
