@@ -12,7 +12,7 @@ FIXME: regs_load.S need complete x32 ABI support; now it will just compile, but 
  else
    IS_64_BIT := 0
  endif
-+ifeq ($(x86_64)_$(ILP32), 1_1)
++ifeq ($(X86_64)_$(ILP32), 1_1)
 +  IS_X32_BIT := 1
 +else
 +  IS_X32_BIT := 0
