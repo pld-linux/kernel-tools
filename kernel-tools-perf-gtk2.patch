@@ -1,11 +1,12 @@
 gtk+2 uses glib APIs that are deprecated in 2.62.x
 --- linux-5.3/tools/perf/Makefile.config.orig	2019-09-25 05:32:27.522918998 +0200
 +++ linux-5.3/tools/perf/Makefile.config	2019-09-25 16:00:49.492003246 +0200
-@@ -169,6 +169,7 @@
+@@ -169,6 +169,8 @@
  FEATURE_CHECK_CFLAGS-libzstd := $(LIBZSTD_CFLAGS)
  FEATURE_CHECK_LDFLAGS-libzstd := $(LIBZSTD_LDFLAGS)
  
 +FEATURE_CHECK_CFLAGS-gtk2 := -Wno-deprecated-declarations
++FEATURE_CHECK_CFLAGS-gtk2-infobar := -Wno-deprecated-declarations
  FEATURE_CHECK_CFLAGS-bpf = -I. -I$(srctree)/tools/include -I$(srctree)/tools/arch/$(SRCARCH)/include/uapi -I$(srctree)/tools/include/uapi
  # include ARCH specific config
  -include $(src-perf)/arch/$(SRCARCH)/Makefile

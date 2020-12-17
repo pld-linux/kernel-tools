@@ -19,8 +19,8 @@
 %undefine	with_multilib
 %endif
 
-%define		basever		5.9
-%define		postver		.0
+%define		basever		5.10
+%define		postver		.1
 Summary:	Assortment of tools for the Linux kernel
 Summary(pl.UTF-8):	Zestaw narzędzi dla jądra Linuksa
 Name:		kernel-tools
@@ -29,17 +29,18 @@ Release:	1
 License:	GPL v2
 Group:		Applications/System
 Source0:	https://www.kernel.org/pub/linux/kernel/v5.x/linux-%{basever}.tar.xz
-# Source0-md5:	0959d759fd19e146367221aff504ad91
+# Source0-md5:	753adc474bf799d569dec4f165ed92c3
 Source1:	cpupower.service
 Source2:	cpupower.config
 %if "%{postver}" != ".0"
 Patch0:		https://www.kernel.org/pub/linux/kernel/v5.x/patch-%{version}.xz
-# Patch0-md5:	7055ff82e7e6a557c04831a191ed14b3
+# Patch0-md5:	33c2cbab3e136939c065e397879a8087
 %endif
 Patch1:		x32.patch
 Patch2:		regex.patch
 Patch3:		%{name}-perf-update.patch
 Patch4:		%{name}-perf-gtk2.patch
+Patch5:		%{name}-slang.patch
 URL:		https://www.kernel.org/
 BuildRequires:	bison
 BuildRequires:	docutils
@@ -404,6 +405,7 @@ cd linux-%{basever}
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
+%patch5 -p1
 
 %{__sed} -i -e '/^CFLAGS = /s/ -g / $(OPTFLAGS) /' tools/hv/Makefile
 %{__sed} -i -e '/^CFLAGS+=/s/ -O1 / $(OPTFLAGS) /' tools/thermal/tmon/Makefile
@@ -480,10 +482,11 @@ CFLAGS="%{rpmcflags}" \
 	IS_X86_64=1 \
 	%{!?with_multilib:NO_PERF_READ_VDSO32=1 NO_PERF_READ_VDSOX32=1} \
 %endif
-	%{!?with_gtk:NO_GTK2=1} \
+	%{?with_gtk:GTK2=1} \
 	%{!?with_libunwind:NO_LIBUNWIND=1} \
 	%{makeopts} \
 	CFLAGS_OPTIMIZE="%{rpmcflags}" \
+	VF=1 \
 	WERROR=0 \
 	prefix=%{_prefix} \
 	perfexecdir=%{_datadir}/perf-core \
@@ -585,7 +588,7 @@ install -p tools/power/cpupower/debug/x86_64/{centrino,powernow-k8}-decode $RPM_
 	IS_X86_64=1 \
 	%{!?with_multilib:NO_PERF_READ_VDSO32=1 NO_PERF_READ_VDSOX32=1} \
 %endif
-	%{!?with_gtk:NO_GTK2=1} \
+	%{?with_gtk:GTK2=1} \
 	%{!?with_libunwind:NO_LIBUNWIND=1} \
 	CC="%{__cc}" \
 	CFLAGS_OPTIMIZE="%{rpmcflags}" \
