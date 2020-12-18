@@ -492,7 +492,7 @@ CFLAGS="%{rpmcflags}" \
 	%{?with_gtk:GTK2=1} \
 	%{!?with_libunwind:NO_LIBUNWIND=1} \
 	%{makeopts} \
-	CFLAGS_OPTIMIZE="%{rpmcflags}" \
+	EXTRA_CFLAGS="%{rpmcflags}" \
 	VF=1 \
 	WERROR=0 \
 	prefix=%{_prefix} \
@@ -598,7 +598,7 @@ install -p tools/power/cpupower/debug/x86_64/{centrino,powernow-k8}-decode $RPM_
 	%{?with_gtk:GTK2=1} \
 	%{!?with_libunwind:NO_LIBUNWIND=1} \
 	%{makeopts} \
-	CFLAGS_OPTIMIZE="%{rpmcflags}" \
+	EXTRA_CFLAGS="%{rpmcflags}" \
 	WERROR=0 \
 	prefix=%{_prefix} \
 	perfexecdir=%{_datadir}/perf-core \
