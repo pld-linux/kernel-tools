@@ -449,31 +449,28 @@ CFLAGS="%{rpmcflags}" \
 # HyperV is Windows based, x86 specific
 %ifarch %{ix86} %{x8664} x32
 %{__make} -C tools/hv \
-	CC="%{__cc}" \
+	%{makeopts} \
 	OPTFLAGS="%{rpmcflags}"
 %endif
 
 CFLAGS="%{rpmcflags}" \
 %{__make} -C tools/iio -j1 \
-	CC="%{__cc}" \
-	%{?with_verbose:V=1}
+	%{makeopts}
 
 %{__make} -C tools/laptop/freefall \
-	CC="%{__cc}" \
+	%{makeopts} \
 	CFLAGS="%{rpmcflags}"
 
 # make bpftool first, top-level bpf CFLAGS cause includes conflict
 CFLAGS="%{rpmcflags}" \
 %{__make} -C tools/bpf/bpftool \
-	CC="%{__cc}" \
-	%{?with_verbose:V=1}
+	%{makeopts}
 
 CFLAGS="%{rpmcflags}" \
 %{__make} -C tools/bpf \
-	CC="%{__cc}" \
+	%{makeopts} \
 	EXTRA_CFLAGS="%{rpmcflags}" \
-	%{?with_runqslower:VMLINUX_BTF=$(rpm -ql kernel-vmlinux | head -n 1)} \
-	%{?with_verbose:V=1}
+	%{?with_runqslower:VMLINUX_BTF=$(rpm -ql kernel-vmlinux | head -n 1)}
 
 # perf
 %if %{with perf}
@@ -504,13 +501,13 @@ CFLAGS="%{rpmcflags}" \
 
 %ifarch %{ix86} x32
 %{__make} -C tools/power/cpupower/debug/i386 centrino-decode powernow-k8-decode \
-	CC="%{__cc}" \
+	%{makeopts} \
 	CFLAGS="%{rpmcflags}"
 %endif
 
 %ifarch %{x8664} x32
 %{__make} -C tools/power/cpupower/debug/x86_64 centrino-decode powernow-k8-decode \
-	CC="%{__cc}" \
+	%{makeopts} \
 	CFLAGS="%{rpmcflags}"
 %endif
 %endif
@@ -518,15 +515,15 @@ CFLAGS="%{rpmcflags}" \
 %ifarch %{ix86} %{x8664} x32
 CFLAGS="%{rpmcflags}" \
 %{__make} -C tools/power/x86/x86_energy_perf_policy \
-	CC="%{__cc}"
+	%{makeopts}
 
 CFLAGS="%{rpmcflags}" \
 %{__make} -C tools/power/x86/turbostat \
-	CC="%{__cc}"
+	%{makeopts}
 %endif
 
 %{__make} -C tools/thermal/tmon \
-	CC="%{__cc}" \
+	%{makeopts} \
 	OPTFLAGS="%{rpmcflags}"
 
 # usbip-utils
@@ -547,7 +544,7 @@ cd ../../..
 
 # page-types, slabinfo
 %{__make} -C tools/vm page-types slabinfo \
-	CC="%{__cc}" \
+	%{makeopts}
 	CFLAGS="%{rpmcflags} -Wall -Wextra -I../lib"
 
 # gen_init_cpio
@@ -590,10 +587,9 @@ install -p tools/power/cpupower/debug/x86_64/{centrino,powernow-k8}-decode $RPM_
 %endif
 	%{?with_gtk:GTK2=1} \
 	%{!?with_libunwind:NO_LIBUNWIND=1} \
-	CC="%{__cc}" \
+	%{makeopts} \
 	CFLAGS_OPTIMIZE="%{rpmcflags}" \
 	WERROR=0 \
-	%{?with_verbose:V=1} \
 	prefix=%{_prefix} \
 	perfexecdir=%{_datadir}/perf-core \
 	template_dir=%{_datadir}/perf-core/templates \
