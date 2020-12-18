@@ -99,7 +99,17 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 # otherwise /usr/lib/rpm/bin/debugedit: canonicalization unexpectedly shrank by one character
 %define		_enable_debug_packages	0
 
-%define		makeopts	CC="%{__cc}" %{?with_verbose:V=1}
+%ifarch ppc ppc64
+%define		makearch	powerpoc
+%else
+%ifarch aarch64
+%define		makearch	arm64
+%else
+%define		makearch	%{_target_base_arch}
+%endif
+%endif
+
+%define		makeopts	ARCH=%{makearch} CC="%{__cc}" %{?with_verbose:V=1}
 
 %description
 This package contains the software from tools/ subdirectory from Linux
