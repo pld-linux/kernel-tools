@@ -100,7 +100,7 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %define		_enable_debug_packages	0
 
 %ifarch ppc ppc64
-%define		makearch	powerpoc
+%define		makearch	powerpc
 %else
 %ifarch aarch64
 %define		makearch	arm64
