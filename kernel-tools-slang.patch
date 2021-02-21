@@ -1,12 +1,12 @@
 Drop -I/usr/include/slang to allow detection of <slang.h> vs <slang/slang.h>
---- linux-5.10/tools/build/feature/Makefile.orig	2020-12-13 23:41:30.000000000 +0100
-+++ linux-5.10/tools/build/feature/Makefile	2020-12-17 06:28:25.229860807 +0100
+--- linux-5.11/tools/build/feature/Makefile.orig	2021-02-21 21:43:25.374191668 +0100
++++ linux-5.11/tools/build/feature/Makefile	2021-02-21 21:45:11.760281992 +0100
 @@ -90,7 +90,7 @@
  ###############################
  
  $(OUTPUT)test-all.bin:
--	$(BUILD) -fstack-protector-all -O2 -D_FORTIFY_SOURCE=2 -ldw -lelf -lnuma -lelf -I/usr/include/slang -lslang $(FLAGS_PERL_EMBED) $(FLAGS_PYTHON_EMBED) -DPACKAGE='"perf"' -lbfd -ldl -lz -llzma -lzstd
-+	$(BUILD) -fstack-protector-all -O2 -D_FORTIFY_SOURCE=2 -ldw -lelf -lnuma -lelf -lslang $(FLAGS_PERL_EMBED) $(FLAGS_PYTHON_EMBED) -DPACKAGE='"perf"' -lbfd -ldl -lz -llzma -lzstd
+-	$(BUILD) -fstack-protector-all -O2 -D_FORTIFY_SOURCE=2 -ldw -lelf -lnuma -lelf -I/usr/include/slang -lslang $(FLAGS_PERL_EMBED) $(FLAGS_PYTHON_EMBED) -DPACKAGE='"perf"' -lbfd -ldl -lz -llzma -lzstd -lcap
++	$(BUILD) -fstack-protector-all -O2 -D_FORTIFY_SOURCE=2 -ldw -lelf -lnuma -lelf -lslang $(FLAGS_PERL_EMBED) $(FLAGS_PYTHON_EMBED) -DPACKAGE='"perf"' -lbfd -ldl -lz -llzma -lzstd -lcap
  
  $(OUTPUT)test-hello.bin:
  	$(BUILD)

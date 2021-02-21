@@ -19,17 +19,17 @@
 %undefine	with_multilib
 %endif
 
-%define		basever		5.10
-%define		postver		.1
+%define		basever		5.11
+%define		postver		.0
 Summary:	Assortment of tools for the Linux kernel
 Summary(pl.UTF-8):	Zestaw narzędzi dla jądra Linuksa
 Name:		kernel-tools
 Version:	%{basever}%{postver}
-Release:	2
+Release:	1
 License:	GPL v2
 Group:		Applications/System
 Source0:	https://www.kernel.org/pub/linux/kernel/v5.x/linux-%{basever}.tar.xz
-# Source0-md5:	753adc474bf799d569dec4f165ed92c3
+# Source0-md5:	d2985a3f16ef1ea3405c04c406e29dcc
 Source1:	cpupower.service
 Source2:	cpupower.config
 %if "%{postver}" != ".0"
@@ -70,6 +70,7 @@ BuildRequires:	gcc-multilib-x32
 %endif
 # for `btftool btf dump file ... format c` - requires vmlinux with BPF section
 %{?with_runqslower:BuildRequires:	kernel-vmlinux >= 5.?}
+BuildRequires:	libcap-devel
 %{?with_libunwind:BuildRequires:	libunwind-devel >= 0.99}
 BuildRequires:	numactl-devel
 BuildRequires:	openssl-devel
@@ -170,9 +171,7 @@ Summary(pl.UTF-8):	Bashowe uzupełnianie parametrów dla poleceń cpupower
 Group:		Applications/Shells
 Requires:	%{name}-cpupower = %{version}-%{release}
 Requires:	bash-completion
-%if "%{_rpmversion}" >= "5"
-BuildArch:	noarch
-%endif
+%{?noarchpackage}
 
 %description -n bash-completion-cpupower
 Bash completion for cpupower tools.
@@ -296,9 +295,7 @@ Summary(pl.UTF-8):	Bashowe uzupełnianie parametrów dla polecenia perf
 Group:		Applications/Shells
 Requires:	%{name}-perf = %{version}-%{release}
 Requires:	bash-completion
-%if "%{_rpmversion}" >= "5"
-BuildArch:	noarch
-%endif
+%{?noarchpackage}
 
 %description -n bash-completion-perf
 Bash completion for perf command.
@@ -312,9 +309,7 @@ Summary(pl.UTF-8):	Bashowe uzupełnianie parametrów dla poleceń kernel-tools
 Group:		Applications/Shells
 Requires:	%{name} = %{version}-%{release}
 Requires:	bash-completion >= 2.0
-%if "%{_rpmversion}" >= "5"
-BuildArch:	noarch
-%endif
+%{?noarchpackage}
 
 %description -n bash-completion-kernel-tools
 Bash completion for kernel-tools commands (currently bpftool).
@@ -590,7 +585,7 @@ install -p tools/power/cpupower/debug/x86_64/{centrino,powernow-k8}-decode $RPM_
 %endif
 
 %if %{with perf}
-%{__make} -C tools/perf install install-man \
+%{__make} -C tools/perf install \
 %ifarch %{x8664}
 	IS_X86_64=1 \
 	%{!?with_multilib:NO_PERF_READ_VDSO32=1 NO_PERF_READ_VDSOX32=1} \
