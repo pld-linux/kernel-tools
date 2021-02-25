@@ -8,10 +8,10 @@
  /* HAVE_ARCH_X86_64_SUPPORT is used in'arch/x86/util/unwind-libunwind.c'
   * for x86_32, we undef it to compile code for x86_32 only.
   */
---- linux-4.19/tools/perf/arch/x86/tests/arch-tests.c.orig	2018-10-22 08:37:37.000000000 +0200
-+++ linux-4.19/tools/perf/arch/x86/tests/arch-tests.c	2018-12-19 21:33:34.463629513 +0100
+--- linux-5.11/tools/perf/arch/x86/tests/arch-tests.c.orig	2021-02-25 21:48:00.008225040 +0100
++++ linux-5.11/tools/perf/arch/x86/tests/arch-tests.c	2021-02-25 22:02:49.697363536 +0100
 @@ -24,7 +24,7 @@
- 		.func = test__insn_x86,
+ 		.func = test__intel_pt_pkt_decoder,
  	},
  #endif
 -#if defined(__x86_64__)

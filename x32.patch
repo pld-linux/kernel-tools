@@ -1,8 +1,8 @@
-FIXME: regs_load.S need complete x32 ABI support; now it will just compile, but tests won't run properly.
---- linux-4.7/tools/scripts/Makefile.arch~	2015-02-09 03:54:22.000000000 +0100
-+++ linux-4.7/tools/scripts/Makefile.arch	2015-04-11 12:17:45.107911011 +0200
-@@ -24,8 +24,15 @@
- ARCH ?= $(RAW_ARCH)
+FIXME: verify x32 ABI support in regs_load.S
+--- linux-5.11/tools/scripts/Makefile.arch.orig	2021-02-25 19:40:18.181160970 +0100
++++ linux-5.11/tools/scripts/Makefile.arch	2021-02-25 19:46:07.599314457 +0100
+@@ -34,8 +34,15 @@
+ endif
  
  LP64 := $(shell echo __LP64__ | ${CC} ${CFLAGS} -E -x c - | tail -n 1)
 +ILP32 := $(shell echo __ILP32__ | ${CC} ${CFLAGS} -E -x c - | tail -n 1)
@@ -17,9 +17,9 @@ FIXME: regs_load.S need complete x32 ABI support; now it will just compile, but 
 +else
 +  IS_X32_BIT := 0
 +endif
---- linux-4.8/tools/perf/Makefile.config~	2015-04-11 12:12:31.000000000 +0200
-+++ linux-4.8/tools/perf/Makefile.config	2015-04-11 12:19:05.011244885 +0200
-@@ -41,6 +41,11 @@
+--- linux-5.11/tools/perf/Makefile.config.orig	2021-02-25 19:40:18.184494476 +0100
++++ linux-5.11/tools/perf/Makefile.config	2021-02-25 19:48:36.007024754 +0100
+@@ -61,6 +61,11 @@
      LIBUNWIND_LIBS = -lunwind-x86 -llzma -lunwind
    endif
    NO_PERF_REGS := 0
@@ -30,111 +30,123 @@ FIXME: regs_load.S need complete x32 ABI support; now it will just compile, but 
 +  endif
  endif
  
- ifeq ($(ARCH),arm)
---- linux-5.5/tools/perf/arch/x86/tests/regs_load.S.orig	2020-01-27 20:52:02.819752368 +0100
-+++ linux-5.5/tools/perf/arch/x86/tests/regs_load.S	2020-01-27 20:56:05.908435444 +0100
-@@ -63,14 +63,20 @@
+ ifeq ($(SRCARCH),arm)
+--- linux-5.11/tools/perf/arch/x86/tests/regs_load.S.orig	2021-02-14 23:32:24.000000000 +0100
++++ linux-5.11/tools/perf/arch/x86/tests/regs_load.S	2021-02-25 21:46:57.425008548 +0100
+@@ -62,6 +62,41 @@
+ 	ret
  SYM_FUNC_END(perf_regs_load)
  #else
++#ifdef(HAVE_ARCH_X32_SUPPORT)
++SYM_FUNC_START(perf_regs_load)
++	movq %rax, AX(%edi)
++	movq %rbx, BX(%edi)
++	movq %rcx, CX(%edi)
++	movq %rdx, DX(%edi)
++	movq %rsi, SI(%edi)
++	movq %rdi, DI(%edi)
++	movq %rbp, BP(%edi)
++
++	leaq 8(%rsp), %rax /* exclude this call.  */
++	movq %rax, SP(%edi)
++
++	movq 0(%rsp), %rax
++	movq %rax, IP(%edi)
++
++	movq $0, FLAGS(%edi)
++	movq $0, CS(%edi)
++	movq $0, SS(%edi)
++	movq $0, DS(%edi)
++	movq $0, ES(%edi)
++	movq $0, FS(%edi)
++	movq $0, GS(%edi)
++
++	movq %r8,  R8(%edi)
++	movq %r9,  R9(%edi)
++	movq %r10, R10(%edi)
++	movq %r11, R11(%edi)
++	movq %r12, R12(%edi)
++	movq %r13, R13(%edi)
++	movq %r14, R14(%edi)
++	movq %r15, R15(%edi)
++	ret
++SYM_FUNC_END(perf_regs_load)
++#else
  SYM_FUNC_START(perf_regs_load)
--	push %edi
-+#ifdef HAVE_ARCH_X32_SUPPORT
-+#else
-+	pushl %edi
-+#endif
+ 	push %edi
  	movl 8(%esp), %edi
- 	movl %eax, AX(%edi)
- 	movl %ebx, BX(%edi)
- 	movl %ecx, CX(%edi)
- 	movl %edx, DX(%edi)
- 	movl %esi, SI(%edi)
--	pop %eax
-+#ifdef HAVE_ARCH_X32_SUPPORT
-+#else
-+	popl %eax
+@@ -90,6 +125,7 @@
+ 	ret
+ SYM_FUNC_END(perf_regs_load)
+ #endif
 +#endif
- 	movl %eax, DI(%edi)
- 	movl %ebp, BP(%edi)
  
+ /*
+  * We need to provide note.GNU-stack section, saying that we want
 --- linux-3.19/tools/perf/bench/sched-messaging.c~	2015-02-09 03:54:22.000000000 +0100
 +++ linux-3.19/tools/perf/bench/sched-messaging.c	2015-04-11 12:33:22.587917365 +0200
-@@ -310,13 +310,24 @@
+@@ -310,13 +310,13 @@
  		printf("# %d groups == %d %s run\n\n",
  		       num_groups, num_groups * 2 * num_fds,
  		       thread_mode ? "threads" : "processes");
-+#if defined(__x86_64__) && !defined(__ILP32__)
- 		printf(" %14s: %lu.%03lu [sec]\n", "Total time",
- 		       diff.tv_sec,
- 		       (unsigned long) (diff.tv_usec / USEC_PER_MSEC));
-+#else
+-		printf(" %14s: %lu.%03lu [sec]\n", "Total time",
+-		       diff.tv_sec,
+-		       (unsigned long) (diff.tv_usec / USEC_PER_MSEC));
 +		printf(" %14s: %llu.%03llu [sec]\n", "Total time",
-+		       diff.tv_sec,
++		       (unsigned long long) diff.tv_sec,
 +		       (unsigned long long) (diff.tv_usec / USEC_PER_MSEC));
-+#endif
  		break;
  	case BENCH_FORMAT_SIMPLE:
-+#if defined(__x86_64__) && !defined(__ILP32__)
- 		printf("%lu.%03lu\n", diff.tv_sec,
- 		       (unsigned long) (diff.tv_usec / USEC_PER_MSEC));
-+#else
-+		printf("%llu.%03llu\n", diff.tv_sec,
+-		printf("%lu.%03lu\n", diff.tv_sec,
+-		       (unsigned long) (diff.tv_usec / USEC_PER_MSEC));
++		printf("%llu.%03llu\n", (unsigned long long) diff.tv_sec,
 +		       (unsigned long long) (diff.tv_usec / USEC_PER_MSEC));
-+#endif
  		break;
  	default:
  		/* reaching here is something disaster */
---- linux-3.19/tools/perf/bench/sched-pipe.c~	2015-02-09 03:54:22.000000000 +0100
-+++ linux-3.19/tools/perf/bench/sched-pipe.c	2015-04-11 12:34:32.727917841 +0200
-@@ -156,9 +156,15 @@
- 		result_usec = diff.tv_sec * 1000000;
+--- linux-5.11/tools/perf/bench/sched-pipe.c.orig	2021-02-14 23:32:24.000000000 +0100
++++ linux-5.11/tools/perf/bench/sched-pipe.c	2021-02-25 20:38:57.380710973 +0100
+@@ -155,9 +155,9 @@
+ 		result_usec = diff.tv_sec * USEC_PER_SEC;
  		result_usec += diff.tv_usec;
  
-+#if defined(__x86_64__) && !defined(__ILP32__)
- 		printf(" %14s: %lu.%03lu [sec]\n\n", "Total time",
- 		       diff.tv_sec,
- 		       (unsigned long) (diff.tv_usec / USEC_PER_MSEC));
-+#else
+-		printf(" %14s: %lu.%03lu [sec]\n\n", "Total time",
+-		       diff.tv_sec,
+-		       (unsigned long) (diff.tv_usec / USEC_PER_MSEC));
 +		printf(" %14s: %llu.%03llu [sec]\n\n", "Total time",
-+		       diff.tv_sec,
++		       (unsigned long long) diff.tv_sec,
 +		       (unsigned long long) (diff.tv_usec / USEC_PER_MSEC));
-+#endif
  
  		printf(" %14lf usecs/op\n",
  		       (double)result_usec / (double)loops);
-@@ -168,9 +174,15 @@
+@@ -167,9 +167,9 @@
  		break;
  
  	case BENCH_FORMAT_SIMPLE:
-+#if defined(__x86_64__) && !defined(__ILP32__)
- 		printf("%lu.%03lu\n",
- 		       diff.tv_sec,
- 		       (unsigned long) (diff.tv_usec / USEC_PER_MSEC));
-+#else
+-		printf("%lu.%03lu\n",
+-		       diff.tv_sec,
+-		       (unsigned long) (diff.tv_usec / USEC_PER_MSEC));
 +		printf("%llu.%03llu\n",
-+		       diff.tv_sec,
++		       (unsigned long long) diff.tv_sec,
 +		       (unsigned long long) (diff.tv_usec / USEC_PER_MSEC));
-+#endif
  		break;
  
  	default:
 --- linux-3.19/tools/perf/builtin-kvm.c~	2015-02-09 03:54:22.000000000 +0100
 +++ linux-3.19/tools/perf/builtin-kvm.c	2015-04-11 12:36:00.511251770 +0200
-@@ -565,7 +565,11 @@
+@@ -565,7 +565,7 @@
  	gettimeofday(&tv, NULL);
  	if (localtime_r(&tv.tv_sec, &ltime)) {
  		strftime(date, sizeof(date), "%H:%M:%S", &ltime);
-+#if defined(__x86_64__) && !defined(__ILP32__)
- 		pr_info("%s.%06ld", date, tv.tv_usec);
-+#else
-+		pr_info("%s.%06lld", date, tv.tv_usec);
-+#endif
+-		pr_info("%s.%06ld", date, tv.tv_usec);
++		pr_info("%s.%06lld", date, (long long) tv.tv_usec);
  	} else
  		pr_info("00:00:00.000000");
  
---- linux-5.1/tools/perf/arch/x86/util/unwind-libunwind.c.orig	2019-05-06 02:42:58.000000000 +0200
-+++ linux-5.1/tools/perf/arch/x86/util/unwind-libunwind.c	2019-05-18 12:32:31.916685600 +0200
+--- linux-5.11/tools/perf/arch/x86/util/unwind-libunwind.c.orig	2021-02-25 20:23:15.561804956 +0100
++++ linux-5.11/tools/perf/arch/x86/util/unwind-libunwind.c	2021-02-25 20:39:56.170430285 +0100
 @@ -8,7 +8,7 @@
- #include "../../util/debug.h"
+ #include "../../util/unwind.h"
  #endif
  
 -#ifdef HAVE_ARCH_X86_64_SUPPORT
