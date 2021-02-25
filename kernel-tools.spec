@@ -195,8 +195,8 @@ Summary:	perf profiler tool
 Summary(pl.UTF-8):	Narzędzie profilujące perf
 Group:		Applications/System
 Suggests:	binutils
-Obsoletes:	perf-core
-Obsoletes:	perf-slang
+Obsoletes:	kernel-tools-perf-core < 3.16.2
+Obsoletes:	kernel-tools-perf-slang < 3.16.2
 
 %description perf
 Perf is a profiler tool for Linux 2.6+ based systems that abstracts
