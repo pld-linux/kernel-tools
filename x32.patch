@@ -37,7 +37,7 @@ FIXME: verify x32 ABI support in regs_load.S
  	ret
  SYM_FUNC_END(perf_regs_load)
  #else
-+#ifdef(HAVE_ARCH_X32_SUPPORT)
++#ifdef HAVE_ARCH_X32_SUPPORT
 +SYM_FUNC_START(perf_regs_load)
 +	movq %rax, AX(%edi)
 +	movq %rbx, BX(%edi)
