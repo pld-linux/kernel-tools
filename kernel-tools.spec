@@ -171,7 +171,7 @@ Summary(pl.UTF-8):	Bashowe uzupełnianie parametrów dla poleceń cpupower
 Group:		Applications/Shells
 Requires:	%{name}-cpupower = %{version}-%{release}
 Requires:	bash-completion
-%{?noarchpackage}
+BuildArch:	noarch
 
 %description -n bash-completion-cpupower
 Bash completion for cpupower tools.
@@ -295,7 +295,7 @@ Summary(pl.UTF-8):	Bashowe uzupełnianie parametrów dla polecenia perf
 Group:		Applications/Shells
 Requires:	%{name}-perf = %{version}-%{release}
 Requires:	bash-completion
-%{?noarchpackage}
+BuildArch:	noarch
 
 %description -n bash-completion-perf
 Bash completion for perf command.
@@ -309,7 +309,7 @@ Summary(pl.UTF-8):	Bashowe uzupełnianie parametrów dla poleceń kernel-tools
 Group:		Applications/Shells
 Requires:	%{name} = %{version}-%{release}
 Requires:	bash-completion >= 2.0
-%{?noarchpackage}
+BuildArch:	noarch
 
 %description -n bash-completion-kernel-tools
 Bash completion for kernel-tools commands (currently bpftool).
