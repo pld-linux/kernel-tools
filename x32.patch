@@ -83,55 +83,6 @@ FIXME: verify x32 ABI support in regs_load.S
  
  /*
   * We need to provide note.GNU-stack section, saying that we want
---- linux-3.19/tools/perf/bench/sched-messaging.c~	2015-02-09 03:54:22.000000000 +0100
-+++ linux-3.19/tools/perf/bench/sched-messaging.c	2015-04-11 12:33:22.587917365 +0200
-@@ -310,13 +310,13 @@
- 		printf("# %d groups == %d %s run\n\n",
- 		       num_groups, num_groups * 2 * num_fds,
- 		       thread_mode ? "threads" : "processes");
--		printf(" %14s: %lu.%03lu [sec]\n", "Total time",
--		       diff.tv_sec,
--		       (unsigned long) (diff.tv_usec / USEC_PER_MSEC));
-+		printf(" %14s: %llu.%03llu [sec]\n", "Total time",
-+		       (unsigned long long) diff.tv_sec,
-+		       (unsigned long long) (diff.tv_usec / USEC_PER_MSEC));
- 		break;
- 	case BENCH_FORMAT_SIMPLE:
--		printf("%lu.%03lu\n", diff.tv_sec,
--		       (unsigned long) (diff.tv_usec / USEC_PER_MSEC));
-+		printf("%llu.%03llu\n", (unsigned long long) diff.tv_sec,
-+		       (unsigned long long) (diff.tv_usec / USEC_PER_MSEC));
- 		break;
- 	default:
- 		/* reaching here is something disaster */
---- linux-5.11/tools/perf/bench/sched-pipe.c.orig	2021-02-14 23:32:24.000000000 +0100
-+++ linux-5.11/tools/perf/bench/sched-pipe.c	2021-02-25 20:38:57.380710973 +0100
-@@ -155,9 +155,9 @@
- 		result_usec = diff.tv_sec * USEC_PER_SEC;
- 		result_usec += diff.tv_usec;
- 
--		printf(" %14s: %lu.%03lu [sec]\n\n", "Total time",
--		       diff.tv_sec,
--		       (unsigned long) (diff.tv_usec / USEC_PER_MSEC));
-+		printf(" %14s: %llu.%03llu [sec]\n\n", "Total time",
-+		       (unsigned long long) diff.tv_sec,
-+		       (unsigned long long) (diff.tv_usec / USEC_PER_MSEC));
- 
- 		printf(" %14lf usecs/op\n",
- 		       (double)result_usec / (double)loops);
-@@ -167,9 +167,9 @@
- 		break;
- 
- 	case BENCH_FORMAT_SIMPLE:
--		printf("%lu.%03lu\n",
--		       diff.tv_sec,
--		       (unsigned long) (diff.tv_usec / USEC_PER_MSEC));
-+		printf("%llu.%03llu\n",
-+		       (unsigned long long) diff.tv_sec,
-+		       (unsigned long long) (diff.tv_usec / USEC_PER_MSEC));
- 		break;
- 
- 	default:
 --- linux-3.19/tools/perf/builtin-kvm.c~	2015-02-09 03:54:22.000000000 +0100
 +++ linux-3.19/tools/perf/builtin-kvm.c	2015-04-11 12:36:00.511251770 +0200
 @@ -565,7 +565,7 @@
