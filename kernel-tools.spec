@@ -19,8 +19,8 @@
 %undefine	with_multilib
 %endif
 
-%define		basever		5.12
-%define		postver		.1
+%define		basever		5.13
+%define		postver		.0
 Summary:	Assortment of tools for the Linux kernel
 Summary(pl.UTF-8):	Zestaw narzędzi dla jądra Linuksa
 Name:		kernel-tools
@@ -29,7 +29,7 @@ Release:	1
 License:	GPL v2
 Group:		Applications/System
 Source0:	https://www.kernel.org/pub/linux/kernel/v5.x/linux-%{basever}.tar.xz
-# Source0-md5:	8c7420990de85f6754db287337da08b4
+# Source0-md5:	76c60fb304510a7bbd9c838790bc5fe4
 Source1:	cpupower.service
 Source2:	cpupower.config
 %if "%{postver}" != ".0"
@@ -659,9 +659,6 @@ install -d $RPM_BUILD_ROOT%{_mandir}/man8
 # gen_init_cpio
 install -p usr/gen_init_cpio $RPM_BUILD_ROOT%{_bindir}/gen_init_cpio
 
-# packaged in man-pages (5.02)
-%{__rm} $RPM_BUILD_ROOT%{_mandir}/man7/bpf-helpers.7*
-
 %clean
 rm -rf $RPM_BUILD_ROOT
 
@@ -751,6 +748,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_docdir}/perf-tip
 %dir %{_datadir}/perf-core
 %attr(755,root,root) %{_datadir}/perf-core/perf-archive
+%attr(755,root,root) %{_datadir}/perf-core/perf-iostat
 %attr(755,root,root) %{_datadir}/perf-core/perf-with-kcore
 %{_datadir}/perf-core/strace
 
