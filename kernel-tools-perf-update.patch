@@ -8,14 +8,23 @@
  /* HAVE_ARCH_X86_64_SUPPORT is used in'arch/x86/util/unwind-libunwind.c'
   * for x86_32, we undef it to compile code for x86_32 only.
   */
---- linux-5.11/tools/perf/arch/x86/tests/arch-tests.c.orig	2021-02-25 21:48:00.008225040 +0100
-+++ linux-5.11/tools/perf/arch/x86/tests/arch-tests.c	2021-02-25 22:02:49.697363536 +0100
-@@ -24,7 +24,7 @@
- 		.func = test__intel_pt_pkt_decoder,
- 	},
+--- linux-5.16/tools/perf/arch/x86/tests/arch-tests.c.orig	2022-01-15 10:37:17.937990467 +0100
++++ linux-5.16/tools/perf/arch/x86/tests/arch-tests.c	2022-01-15 11:34:56.522587040 +0100
+@@ -8,7 +8,7 @@ DEFINE_SUITE("x86 rdpmc", rdpmc);
+ DEFINE_SUITE("x86 instruction decoder - new instructions", insn_x86);
+ DEFINE_SUITE("Intel PT packet decoder", intel_pt_pkt_decoder);
  #endif
 -#if defined(__x86_64__)
 +#if defined(__x86_64__) && !defined(__ILP32__)
- 	{
- 		.desc = "x86 bp modify",
- 		.func = test__bp_modify,
+ DEFINE_SUITE("x86 bp modify", bp_modify);
+ #endif
+ DEFINE_SUITE("x86 Sample parsing", x86_sample_parsing);
+@@ -22,7 +22,7 @@ struct test_suite *arch_tests[] = {
+ 	&suite__insn_x86,
+ 	&suite__intel_pt_pkt_decoder,
+ #endif
+-#if defined(__x86_64__)
++#if defined(__x86_64__) && !defined(__ILP32__)
+ 	&suite__bp_modify,
+ #endif
+ 	&suite__x86_sample_parsing,

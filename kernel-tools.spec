@@ -19,7 +19,7 @@
 %undefine	with_multilib
 %endif
 
-%define		basever		5.15
+%define		basever		5.16
 %define		postver		.0
 Summary:	Assortment of tools for the Linux kernel
 Summary(pl.UTF-8):	Zestaw narzędzi dla jądra Linuksa
@@ -29,7 +29,7 @@ Release:	1
 License:	GPL v2
 Group:		Applications/System
 Source0:	https://www.kernel.org/pub/linux/kernel/v5.x/linux-%{basever}.tar.xz
-# Source0-md5:	071d49ff4e020d58c04f9f3f76d3b594
+# Source0-md5:	e6680ce7c989a3efe58b51e3f3f0bf93
 Source1:	cpupower.service
 Source2:	cpupower.config
 %if "%{postver}" != ".0"
@@ -40,7 +40,6 @@ Patch1:		x32.patch
 Patch2:		regex.patch
 Patch3:		%{name}-perf-update.patch
 Patch4:		%{name}-perf-gtk2.patch
-Patch5:		%{name}-slang.patch
 URL:		https://www.kernel.org/
 BuildRequires:	bison
 BuildRequires:	docutils
@@ -410,11 +409,10 @@ cd linux-%{basever}
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
-%patch5 -p1
 
 %{__sed} -i -e '/^CFLAGS = /s/ -g / $(OPTFLAGS) /' tools/hv/Makefile
 %{__sed} -i -e '/^CFLAGS+=/s/ -O1 / $(OPTFLAGS) /' tools/thermal/tmon/Makefile
-%{__sed} -i -e 's#libexec/perf-core#share/perf-core#g' tools/perf/Makefile.config
+%{__sed} -i -e 's#libexec/perf-core#%{_lib}/perf-core#g' tools/perf/Makefile.config
 
 # don't rebuild on make install
 %{__sed} -i -e '/^\$(LIBBPF): FORCE/ s/FORCE$//' tools/bpf/bpftool/Makefile
@@ -491,7 +489,7 @@ CFLAGS="%{rpmcflags}" \
 	VF=1 \
 	WERROR=0 \
 	prefix=%{_prefix} \
-	perfexecdir=%{_datadir}/perf-core \
+	perfexecdir=%{_libdir}/perf-core \
 	lib=%{_lib} \
 	template_dir=%{_datadir}/perf-core/templates
 %endif
@@ -596,16 +594,16 @@ install -p tools/power/cpupower/debug/x86_64/{centrino,powernow-k8}-decode $RPM_
 	EXTRA_CFLAGS="%{rpmcflags}" \
 	WERROR=0 \
 	prefix=%{_prefix} \
-	perfexecdir=%{_datadir}/perf-core \
+	perfexecdir=%{_libdir}/perf-core \
 	template_dir=%{_datadir}/perf-core/templates \
 	bash_compdir=%{bash_compdir} \
 	lib=%{_lib} \
 	DESTDIR=$RPM_BUILD_ROOT
 
-%py_comp $RPM_BUILD_ROOT%{_datadir}/perf-core/scripts/python
-%py_ocomp $RPM_BUILD_ROOT%{_datadir}/perf-core/scripts/python
+%py_comp $RPM_BUILD_ROOT%{_libdir}/perf-core/scripts/python
+%py_ocomp $RPM_BUILD_ROOT%{_libdir}/perf-core/scripts/python
 
-%{__rm} -r $RPM_BUILD_ROOT%{_datadir}/perf-core/tests
+%{__rm} -r $RPM_BUILD_ROOT%{_libdir}/perf-core/tests
 %endif
 
 %if %{with usbip}
@@ -747,32 +745,36 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/perf*.1*
 %{_docdir}/perf-tip
 %dir %{_datadir}/perf-core
-%attr(755,root,root) %{_datadir}/perf-core/perf-archive
-%attr(755,root,root) %{_datadir}/perf-core/perf-iostat
-%attr(755,root,root) %{_datadir}/perf-core/perf-with-kcore
 %{_datadir}/perf-core/strace
+%dir %{_libdir}/perf-core
+%attr(755,root,root) %{_libdir}/perf-core/perf-archive
+%attr(755,root,root) %{_libdir}/perf-core/perf-iostat
+%attr(755,root,root) %{_libdir}/perf-core/perf-with-kcore
+%dir %{_libdir}/perf-core/dlfilters
+%attr(755,root,root) %{_libdir}/perf-core/dlfilters/dlfilter-show-cycles.so
+%attr(755,root,root) %{_libdir}/perf-core/dlfilters/dlfilter-test-api-v0.so
 
-%dir %{_datadir}/perf-core/scripts
+%dir %{_libdir}/perf-core/scripts
 
-%dir %{_datadir}/perf-core/scripts/perl
-%dir %{_datadir}/perf-core/scripts/perl/Perf-Trace-Util
-%dir %{_datadir}/perf-core/scripts/perl/Perf-Trace-Util/lib
-%dir %{_datadir}/perf-core/scripts/perl/Perf-Trace-Util/lib/Perf
-%dir %{_datadir}/perf-core/scripts/perl/Perf-Trace-Util/lib/Perf/Trace
-%{_datadir}/perf-core/scripts/perl/Perf-Trace-Util/lib/Perf/Trace/*.pm
-%dir %{_datadir}/perf-core/scripts/perl/bin
-%attr(755,root,root) %{_datadir}/perf-core/scripts/perl/bin/*
-%{_datadir}/perf-core/scripts/perl/*.pl
+%dir %{_libdir}/perf-core/scripts/perl
+%dir %{_libdir}/perf-core/scripts/perl/Perf-Trace-Util
+%dir %{_libdir}/perf-core/scripts/perl/Perf-Trace-Util/lib
+%dir %{_libdir}/perf-core/scripts/perl/Perf-Trace-Util/lib/Perf
+%dir %{_libdir}/perf-core/scripts/perl/Perf-Trace-Util/lib/Perf/Trace
+%{_libdir}/perf-core/scripts/perl/Perf-Trace-Util/lib/Perf/Trace/*.pm
+%dir %{_libdir}/perf-core/scripts/perl/bin
+%attr(755,root,root) %{_libdir}/perf-core/scripts/perl/bin/*
+%{_libdir}/perf-core/scripts/perl/*.pl
 
-%dir %{_datadir}/perf-core/scripts/python
-%dir %{_datadir}/perf-core/scripts/python/Perf-Trace-Util
-%dir %{_datadir}/perf-core/scripts/python/Perf-Trace-Util/lib
-%dir %{_datadir}/perf-core/scripts/python/Perf-Trace-Util/lib/Perf
-%dir %{_datadir}/perf-core/scripts/python/Perf-Trace-Util/lib/Perf/Trace
-%{_datadir}/perf-core/scripts/python/Perf-Trace-Util/lib/Perf/Trace/*.py*
-%dir %{_datadir}/perf-core/scripts/python/bin
-%attr(755,root,root) %{_datadir}/perf-core/scripts/python/bin/*
-%{_datadir}/perf-core/scripts/python/*.py*
+%dir %{_libdir}/perf-core/scripts/python
+%dir %{_libdir}/perf-core/scripts/python/Perf-Trace-Util
+%dir %{_libdir}/perf-core/scripts/python/Perf-Trace-Util/lib
+%dir %{_libdir}/perf-core/scripts/python/Perf-Trace-Util/lib/Perf
+%dir %{_libdir}/perf-core/scripts/python/Perf-Trace-Util/lib/Perf/Trace
+%{_libdir}/perf-core/scripts/python/Perf-Trace-Util/lib/Perf/Trace/*.py*
+%dir %{_libdir}/perf-core/scripts/python/bin
+%attr(755,root,root) %{_libdir}/perf-core/scripts/python/bin/*
+%{_libdir}/perf-core/scripts/python/*.py*
 
 %dir %{_libdir}/traceevent
 %dir %{_libdir}/traceevent/plugins
