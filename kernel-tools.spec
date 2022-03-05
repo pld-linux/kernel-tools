@@ -32,6 +32,7 @@ Source0:	https://www.kernel.org/pub/linux/kernel/v5.x/linux-%{basever}.tar.xz
 # Source0-md5:	e6680ce7c989a3efe58b51e3f3f0bf93
 Source1:	cpupower.service
 Source2:	cpupower.config
+Source3:	cpupower@.service
 %if "%{postver}" != ".0"
 Patch0:		https://www.kernel.org/pub/linux/kernel/v5.x/patch-%{version}.xz
 # Patch0-md5:	0e03bc49d0db9ae31a5086ec49be3768
@@ -574,6 +575,7 @@ cd linux-%{basever}
 install -d $RPM_BUILD_ROOT{/etc/sysconfig,%{systemdunitdir}}
 cp -p %{SOURCE1} $RPM_BUILD_ROOT%{systemdunitdir}/cpupower.service
 cp -p %{SOURCE2} $RPM_BUILD_ROOT/etc/sysconfig/cpupower
+cp -p %{SOURCE3} $RPM_BUILD_ROOT%{systemdunitdir}/cpupower@.service
 
 %ifarch %{ix86} x32
 install -p tools/power/cpupower/debug/i386/{centrino,powernow-k8}-decode $RPM_BUILD_ROOT%{_bindir}
