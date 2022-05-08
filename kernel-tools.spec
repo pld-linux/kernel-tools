@@ -19,23 +19,23 @@
 %undefine	with_multilib
 %endif
 
-%define		basever		5.16
-%define		postver		.0
+%define		basever		5.17
+%define		postver		.1
 Summary:	Assortment of tools for the Linux kernel
 Summary(pl.UTF-8):	Zestaw narzędzi dla jądra Linuksa
 Name:		kernel-tools
 Version:	%{basever}%{postver}
-Release:	3
+Release:	1
 License:	GPL v2
 Group:		Applications/System
 Source0:	https://www.kernel.org/pub/linux/kernel/v5.x/linux-%{basever}.tar.xz
-# Source0-md5:	e6680ce7c989a3efe58b51e3f3f0bf93
+# Source0-md5:	07321a70a48d062cebd0358132f11771
 Source1:	cpupower.service
 Source2:	cpupower.config
 Source3:	cpupower@.service
 %if "%{postver}" != ".0"
 Patch0:		https://www.kernel.org/pub/linux/kernel/v5.x/patch-%{version}.xz
-# Patch0-md5:	0e03bc49d0db9ae31a5086ec49be3768
+# Patch0-md5:	5a015eeaa9a3bf5bea84290f54ccf48d
 %endif
 Patch1:		x32.patch
 Patch2:		regex.patch
@@ -712,6 +712,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/cpupower
 %{_mandir}/man1/cpupower*.1*
 %{systemdunitdir}/cpupower.service
+%{systemdunitdir}/cpupower@.service
 %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/cpupower
 
 %files cpupower-libs
