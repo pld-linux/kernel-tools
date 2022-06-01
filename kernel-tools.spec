@@ -96,6 +96,8 @@ BuildRequires:	libtool >= 2:2
 BuildRequires:	libwrap-devel
 BuildRequires:	udev-devel
 %endif
+# /usr/bin/turbostat
+Conflicts:	pmtools < 20110323-2
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 # otherwise /usr/lib/rpm/bin/debugedit: canonicalization unexpectedly shrank by one character
