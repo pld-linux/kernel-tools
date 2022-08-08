@@ -19,7 +19,7 @@
 %undefine	with_multilib
 %endif
 
-%define		basever		5.18
+%define		basever		5.19
 %define		postver		.0
 Summary:	Assortment of tools for the Linux kernel
 Summary(pl.UTF-8):	Zestaw narzędzi dla jądra Linuksa
@@ -29,7 +29,7 @@ Release:	1
 License:	GPL v2
 Group:		Applications/System
 Source0:	https://www.kernel.org/pub/linux/kernel/v5.x/linux-%{basever}.tar.xz
-# Source0-md5:	58e80452e2d8e1993cd7ec95e697ab5a
+# Source0-md5:	f91bfe133d2cb1692f705947282e123a
 Source1:	cpupower.service
 Source2:	cpupower.config
 Source3:	cpupower@.service
@@ -755,7 +755,6 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{_libdir}/perf-core
 %attr(755,root,root) %{_libdir}/perf-core/perf-archive
 %attr(755,root,root) %{_libdir}/perf-core/perf-iostat
-%attr(755,root,root) %{_libdir}/perf-core/perf-with-kcore
 %dir %{_libdir}/perf-core/dlfilters
 %attr(755,root,root) %{_libdir}/perf-core/dlfilters/dlfilter-show-cycles.so
 %attr(755,root,root) %{_libdir}/perf-core/dlfilters/dlfilter-test-api-v0.so
