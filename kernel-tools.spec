@@ -606,8 +606,8 @@ install -p tools/power/cpupower/debug/x86_64/{centrino,powernow-k8}-decode $RPM_
 	lib=%{_lib} \
 	DESTDIR=$RPM_BUILD_ROOT
 
-%py_comp $RPM_BUILD_ROOT%{_libdir}/perf-core/scripts/python
-%py_ocomp $RPM_BUILD_ROOT%{_libdir}/perf-core/scripts/python
+%py3_comp $RPM_BUILD_ROOT%{_libdir}/perf-core/scripts/python
+%py3_ocomp $RPM_BUILD_ROOT%{_libdir}/perf-core/scripts/python
 
 %{__rm} -r $RPM_BUILD_ROOT%{_libdir}/perf-core/tests
 %endif
@@ -777,10 +777,12 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{_libdir}/perf-core/scripts/python/Perf-Trace-Util/lib
 %dir %{_libdir}/perf-core/scripts/python/Perf-Trace-Util/lib/Perf
 %dir %{_libdir}/perf-core/scripts/python/Perf-Trace-Util/lib/Perf/Trace
-%{_libdir}/perf-core/scripts/python/Perf-Trace-Util/lib/Perf/Trace/*.py*
+%{_libdir}/perf-core/scripts/python/Perf-Trace-Util/lib/Perf/Trace/*.py
+%{_libdir}/perf-core/scripts/python/Perf-Trace-Util/lib/Perf/Trace/__pycache__/*.py[co]
 %dir %{_libdir}/perf-core/scripts/python/bin
 %attr(755,root,root) %{_libdir}/perf-core/scripts/python/bin/*
-%{_libdir}/perf-core/scripts/python/*.py*
+%{_libdir}/perf-core/scripts/python/*.py
+%{_libdir}/perf-core/scripts/python/__pycache__/*.py[co]
 
 %dir %{_libdir}/traceevent
 %dir %{_libdir}/traceevent/plugins
