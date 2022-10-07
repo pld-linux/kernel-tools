@@ -76,7 +76,8 @@ BuildRequires:	libcap-devel
 BuildRequires:	numactl-devel
 BuildRequires:	openssl-devel
 BuildRequires:	perl-devel >= 5.1
-BuildRequires:	python-devel
+BuildRequires:	python3-devel
+BuildRequires:	python3-setuptools
 BuildRequires:	rpm-pythonprov
 BuildRequires:	slang-devel
 BuildRequires:	xmlto
