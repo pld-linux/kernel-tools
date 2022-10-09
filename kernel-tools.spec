@@ -25,7 +25,7 @@ Summary:	Assortment of tools for the Linux kernel
 Summary(pl.UTF-8):	Zestaw narzędzi dla jądra Linuksa
 Name:		kernel-tools
 Version:	%{basever}%{postver}
-Release:	1
+Release:	2
 License:	GPL v2
 Group:		Applications/System
 Source0:	https://www.kernel.org/pub/linux/kernel/v6.x/linux-%{basever}.tar.xz
@@ -778,10 +778,12 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{_libdir}/perf-core/scripts/python/Perf-Trace-Util/lib/Perf
 %dir %{_libdir}/perf-core/scripts/python/Perf-Trace-Util/lib/Perf/Trace
 %{_libdir}/perf-core/scripts/python/Perf-Trace-Util/lib/Perf/Trace/*.py
+%dir %{_libdir}/perf-core/scripts/python/Perf-Trace-Util/lib/Perf/Trace/__pycache__
 %{_libdir}/perf-core/scripts/python/Perf-Trace-Util/lib/Perf/Trace/__pycache__/*.py[co]
 %dir %{_libdir}/perf-core/scripts/python/bin
 %attr(755,root,root) %{_libdir}/perf-core/scripts/python/bin/*
 %{_libdir}/perf-core/scripts/python/*.py
+%dir %{_libdir}/perf-core/scripts/python/__pycache__
 %{_libdir}/perf-core/scripts/python/__pycache__/*.py[co]
 
 %dir %{_libdir}/traceevent
