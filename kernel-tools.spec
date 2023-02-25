@@ -19,23 +19,23 @@
 %undefine	with_multilib
 %endif
 
-%define		basever		6.1
-%define		postver		.6
+%define		basever		6.2
+%define		postver		.1
 Summary:	Assortment of tools for the Linux kernel
 Summary(pl.UTF-8):	Zestaw narzędzi dla jądra Linuksa
 Name:		kernel-tools
 Version:	%{basever}%{postver}
-Release:	2
+Release:	0.1
 License:	GPL v2
 Group:		Applications/System
 Source0:	https://www.kernel.org/pub/linux/kernel/v6.x/linux-%{basever}.tar.xz
-# Source0-md5:	475320de08f16c9fa486fc4edfe98b30
+# Source0-md5:	787862593d7bf354cf1a5c37e21fc147
 Source1:	cpupower.service
 Source2:	cpupower.config
 Source3:	cpupower@.service
 %if "%{postver}" != ".0"
 Patch0:		https://www.kernel.org/pub/linux/kernel/v6.x/patch-%{version}.xz
-# Patch0-md5:	3c4ce326d5e8afd9e7e13d55f7cec8bc
+# Patch0-md5:	be09fdc4f007b676d67e894d96304500
 %endif
 Patch1:		x32.patch
 Patch2:		regex.patch
@@ -46,6 +46,7 @@ BuildRequires:	bison
 BuildRequires:	docutils
 BuildRequires:	flex
 BuildRequires:	gettext-tools
+BuildRequires:	libtraceevent-devel
 BuildRequires:	linux-libc-headers >= 7:4.12
 BuildRequires:	ncurses-devel
 BuildRequires:	ncurses-ext-devel
@@ -728,6 +729,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/libcpupower.so
 %{_includedir}/cpufreq.h
 %{_includedir}/cpuidle.h
+%{_includedir}/powercap.h
 
 %files -n bash-completion-cpupower
 %defattr(644,root,root,755)
@@ -792,7 +794,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %dir %{_prefix}/lib/perf
 %{_prefix}/lib/perf/examples
-%{_prefix}/lib/perf/include
+#%{_prefix}/lib/perf/include
 
 %{_includedir}/perf
 
