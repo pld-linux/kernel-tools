@@ -20,12 +20,12 @@
 %endif
 
 %define		basever		6.2
-%define		postver		.1
+%define		postver		.10
 Summary:	Assortment of tools for the Linux kernel
 Summary(pl.UTF-8):	Zestaw narzędzi dla jądra Linuksa
 Name:		kernel-tools
 Version:	%{basever}%{postver}
-Release:	0.1
+Release:	1
 License:	GPL v2
 Group:		Applications/System
 Source0:	https://www.kernel.org/pub/linux/kernel/v6.x/linux-%{basever}.tar.xz
@@ -35,7 +35,7 @@ Source2:	cpupower.config
 Source3:	cpupower@.service
 %if "%{postver}" != ".0"
 Patch0:		https://www.kernel.org/pub/linux/kernel/v6.x/patch-%{version}.xz
-# Patch0-md5:	be09fdc4f007b676d67e894d96304500
+# Patch0-md5:	e0221ea0e6eeb147c29d2fd72e987ed5
 %endif
 Patch1:		x32.patch
 Patch2:		regex.patch
@@ -788,13 +788,8 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{_libdir}/perf-core/scripts/python/__pycache__
 %{_libdir}/perf-core/scripts/python/__pycache__/*.py[co]
 
-%dir %{_libdir}/traceevent
-%dir %{_libdir}/traceevent/plugins
-%attr(755,root,root) %{_libdir}/traceevent/plugins/plugin_*.so
-
 %dir %{_prefix}/lib/perf
 %{_prefix}/lib/perf/examples
-#%{_prefix}/lib/perf/include
 
 %{_includedir}/perf
 
