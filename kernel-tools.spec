@@ -19,8 +19,8 @@
 %undefine	with_multilib
 %endif
 
-%define		basever		6.2
-%define		postver		.10
+%define		basever		6.3
+%define		postver		.4
 Summary:	Assortment of tools for the Linux kernel
 Summary(pl.UTF-8):	Zestaw narzędzi dla jądra Linuksa
 Name:		kernel-tools
@@ -29,13 +29,13 @@ Release:	1
 License:	GPL v2
 Group:		Applications/System
 Source0:	https://www.kernel.org/pub/linux/kernel/v6.x/linux-%{basever}.tar.xz
-# Source0-md5:	787862593d7bf354cf1a5c37e21fc147
+# Source0-md5:	df4f97e65bde4174dd8be2af836f28e1
 Source1:	cpupower.service
 Source2:	cpupower.config
 Source3:	cpupower@.service
 %if "%{postver}" != ".0"
 Patch0:		https://www.kernel.org/pub/linux/kernel/v6.x/patch-%{version}.xz
-# Patch0-md5:	e0221ea0e6eeb147c29d2fd72e987ed5
+# Patch0-md5:	7631fac893c5b490c87edd4b12f03f3b
 %endif
 Patch1:		x32.patch
 Patch2:		regex.patch
@@ -445,7 +445,7 @@ cd linux-%{basever}
 	%{makeopts} \
 	EXTRA_CFLAGS="%{rpmcflags}"
 
-# tools common (used eg. by tools/vm)
+# tools common (used eg. by tools/mm)
 %{__make} -C tools/lib/api \
 	%{makeopts} \
 	EXTRA_CFLAGS="%{rpmcflags} $Wstringop"
@@ -552,7 +552,7 @@ cd ../../..
 %endif
 
 # page-types, slabinfo
-%{__make} -C tools/vm page-types slabinfo \
+%{__make} -C tools/mm page-types slabinfo \
 	%{makeopts}
 	CFLAGS="%{rpmcflags} -Wall -Wextra -I../lib"
 
@@ -649,8 +649,8 @@ install -p tools/laptop/freefall/freefall $RPM_BUILD_ROOT%{_sbindir}
 install -p tools/thermal/tmon/tmon $RPM_BUILD_ROOT%{_bindir}
 cp -p tools/thermal/tmon/tmon.8 $RPM_BUILD_ROOT%{_mandir}/man8
 
-install -p tools/vm/slabinfo $RPM_BUILD_ROOT%{_bindir}
-install -p tools/vm/page-types $RPM_BUILD_ROOT%{_sbindir}
+install -p tools/mm/slabinfo $RPM_BUILD_ROOT%{_bindir}
+install -p tools/mm/page-types $RPM_BUILD_ROOT%{_sbindir}
 
 %ifarch %{ix86} %{x8664} x32
 install -d $RPM_BUILD_ROOT%{_mandir}/man8
