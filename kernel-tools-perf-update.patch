@@ -20,7 +20,7 @@
  #endif
  DEFINE_SUITE("x86 Sample parsing", x86_sample_parsing);
 @@ -22,7 +22,7 @@ struct test_suite *arch_tests[] = {
- 	&suite__insn_x86,
+ #endif
  	&suite__intel_pt,
  #endif
 -#if defined(__x86_64__)
