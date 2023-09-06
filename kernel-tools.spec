@@ -314,7 +314,7 @@ Summary:	Bash completion for kernel-tools commands
 Summary(pl.UTF-8):	Bashowe uzupełnianie parametrów dla poleceń kernel-tools
 Group:		Applications/Shells
 Requires:	%{name} = %{version}-%{release}
-Requires:	bash-completion >= 2.0
+Requires:	bash-completion >= 1:2.0
 BuildArch:	noarch
 
 %description -n bash-completion-kernel-tools
