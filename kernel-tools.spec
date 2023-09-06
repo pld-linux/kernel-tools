@@ -55,6 +55,7 @@ BuildRequires:	pkgconfig
 BuildRequires:	python3
 BuildRequires:	python3-modules
 BuildRequires:	readline-devel
+BuildRequires:	rpm-build >= 4.6
 BuildRequires:	rpmbuild(macros) >= 1.673
 BuildRequires:	tar >= 1:1.22
 BuildRequires:	xz
