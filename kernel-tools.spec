@@ -19,7 +19,7 @@
 %undefine	with_multilib
 %endif
 
-%define		basever		6.5
+%define		basever		6.6
 %define		postver		.1
 Summary:	Assortment of tools for the Linux kernel
 Summary(pl.UTF-8):	Zestaw narzędzi dla jądra Linuksa
@@ -29,13 +29,13 @@ Release:	1
 License:	GPL v2
 Group:		Applications/System
 Source0:	https://www.kernel.org/pub/linux/kernel/v6.x/linux-%{basever}.tar.xz
-# Source0-md5:	42c2796f9babe4a1be3f2001c817ff4a
+# Source0-md5:	452098d80ba925af3a4ab35998f3aef5
 Source1:	cpupower.service
 Source2:	cpupower.config
 Source3:	cpupower@.service
 %if "%{postver}" != ".0"
 Patch0:		https://www.kernel.org/pub/linux/kernel/v6.x/patch-%{version}.xz
-# Patch0-md5:	1c780bfe190302f1ea2f6f1153a3a84d
+# Patch0-md5:	0b8d38ca9ae6f0a7cc35651bc9b8c0e4
 %endif
 Patch1:		x32.patch
 Patch2:		regex.patch
@@ -723,7 +723,7 @@ rm -rf $RPM_BUILD_ROOT
 %files cpupower-libs
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libcpupower.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libcpupower.so.0
+%attr(755,root,root) %ghost %{_libdir}/libcpupower.so.1
 
 %files cpupower-libs-devel
 %defattr(644,root,root,755)
@@ -762,6 +762,7 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{_libdir}/perf-core/dlfilters
 %attr(755,root,root) %{_libdir}/perf-core/dlfilters/dlfilter-show-cycles.so
 %attr(755,root,root) %{_libdir}/perf-core/dlfilters/dlfilter-test-api-v0.so
+%attr(755,root,root) %{_libdir}/perf-core/dlfilters/dlfilter-test-api-v2.so
 
 %dir %{_libdir}/perf-core/scripts
 
@@ -788,9 +789,6 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/perf-core/scripts/python/*.py
 %dir %{_libdir}/perf-core/scripts/python/__pycache__
 %{_libdir}/perf-core/scripts/python/__pycache__/*.py[co]
-
-%dir %{_prefix}/lib/perf
-%{_prefix}/lib/perf/examples
 
 %{_includedir}/perf
 
