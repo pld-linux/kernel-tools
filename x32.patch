@@ -17,12 +17,12 @@ FIXME: verify x32 ABI support in regs_load.S
 +else
 +  IS_X32_BIT := 0
 +endif
---- linux-5.11/tools/perf/Makefile.config.orig	2021-02-25 19:40:18.184494476 +0100
-+++ linux-5.11/tools/perf/Makefile.config	2021-02-25 19:48:36.007024754 +0100
-@@ -61,6 +61,11 @@
+--- linux-6.9/tools/perf/Makefile.config.orig	2024-05-22 06:16:41.511401784 +0200
++++ linux-6.9/tools/perf/Makefile.config	2024-05-22 06:23:13.943609135 +0200
+@@ -63,6 +63,11 @@ ifeq ($(SRCARCH),x86)
+   else
      LIBUNWIND_LIBS = -lunwind-x86 -llzma -lunwind
    endif
-   NO_PERF_REGS := 0
 +  ifeq (${IS_X32_BIT}, 1)
 +    CFLAGS += -DHAVE_ARCH_X32_SUPPORT
 +    ARCH_INCLUDE = ../../arch/x86/lib/memcpy_64.S ../../arch/x86/lib/memset_64.S
