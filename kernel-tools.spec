@@ -19,8 +19,8 @@
 %undefine	with_multilib
 %endif
 
-%define		basever		6.9
-%define		postver		.1
+%define		basever		6.10
+%define		postver		.0
 Summary:	Assortment of tools for the Linux kernel
 Summary(pl.UTF-8):	Zestaw narzędzi dla jądra Linuksa
 Name:		kernel-tools
@@ -29,7 +29,7 @@ Release:	3
 License:	GPL v2
 Group:		Applications/System
 Source0:	https://www.kernel.org/pub/linux/kernel/v6.x/linux-%{basever}.tar.xz
-# Source0-md5:	b9828ed78dae306e3d90643cd5cdb8f1
+# Source0-md5:	c0ce046a9a0d041e13cf222f81eae574
 Source1:	cpupower.service
 Source2:	cpupower.config
 Source3:	cpupower@.service
@@ -628,7 +628,7 @@ install -p tools/laptop/dslm/dslm $RPM_BUILD_ROOT%{_sbindir}
 install -p tools/gpio/lsgpio $RPM_BUILD_ROOT%{_bindir}
 
 %ifarch %{ix86} %{x8664} x32
-install -p tools/hv/hv_{fcopy,kvp,vss}_daemon $RPM_BUILD_ROOT%{_sbindir}
+install -p tools/hv/hv_{fcopy_uio,kvp,vss}_daemon $RPM_BUILD_ROOT%{_sbindir}
 # TODO: PLD-specific hv_get_dhcp_info,hv_get_dns_info,hv_set_ifconfig
 %{__sed} -e '1s,/usr/bin/env python,%{__python},' tools/hv/lsvmbus >$RPM_BUILD_ROOT%{_bindir}/lsvmbus
 chmod 755 $RPM_BUILD_ROOT%{_bindir}/lsvmbus
@@ -742,7 +742,7 @@ rm -rf $RPM_BUILD_ROOT
 # TODO: PLDify these scripts and move to bindir
 %doc linux-%{basever}/tools/hv/hv_{get_dhcp_info,get_dns_info,set_ifconfig}.sh
 %attr(755,root,root) %{_bindir}/lsvmbus
-%attr(755,root,root) %{_sbindir}/hv_fcopy_daemon
+%attr(755,root,root) %{_sbindir}/hv_fcopy_uio_daemon
 %attr(755,root,root) %{_sbindir}/hv_kvp_daemon
 %attr(755,root,root) %{_sbindir}/hv_vss_daemon
 %endif
