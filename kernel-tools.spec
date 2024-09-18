@@ -64,6 +64,7 @@ BuildRequires:	asciidoc
 BuildRequires:	audit-libs-devel
 BuildRequires:	babeltrace-devel
 BuildRequires:	binutils-devel >= 4:2.29
+BuildRequires:	clang >= 12.0.1
 BuildRequires:	docbook-dtd45-xml
 BuildRequires:	docbook-style-xsl
 BuildRequires:	elfutils-devel >= 0.158
@@ -73,6 +74,7 @@ BuildRequires:	gcc-multilib-x32
 %endif
 # for `btftool btf dump file ... format c` - requires vmlinux with BPF section
 %{?with_runqslower:BuildRequires:	kernel-vmlinux >= 5.?}
+BuildRequires:	libbpf-devel
 BuildRequires:	libcap-devel
 %{?with_libunwind:BuildRequires:	libunwind-devel >= 0.99}
 BuildRequires:	numactl-devel
