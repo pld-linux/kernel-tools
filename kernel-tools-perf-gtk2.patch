@@ -8,5 +8,5 @@ gtk+2 uses glib APIs that are deprecated in 2.62.x
 +FEATURE_CHECK_CFLAGS-gtk2 := -Wno-deprecated-declarations
 +FEATURE_CHECK_CFLAGS-gtk2-infobar := -Wno-deprecated-declarations
  # for linking with debug library, run like:
- # make DEBUG=1 LIBTRACEEVENT_DIR=/opt/libtraceevent/
- TRACEEVENTLIBS := -ltraceevent
+ # make DEBUG=1 PKG_CONFIG_PATH=/opt/libtraceevent/(lib|lib64)/pkgconfig
+ 
