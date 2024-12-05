@@ -19,29 +19,28 @@
 %undefine	with_multilib
 %endif
 
-%define		basever		6.11
-%define		postver		.0
+%define		basever		6.12
+%define		postver		.2
 Summary:	Assortment of tools for the Linux kernel
 Summary(pl.UTF-8):	Zestaw narzędzi dla jądra Linuksa
 Name:		kernel-tools
 Version:	%{basever}%{postver}
-Release:	3
+Release:	1
 License:	GPL v2
 Group:		Applications/System
 Source0:	https://www.kernel.org/pub/linux/kernel/v6.x/linux-%{basever}.tar.xz
-# Source0-md5:	612a9feef07be8663098a0a58cddf7a6
+# Source0-md5:	844fae6a58c7f43af44d8cea8484b4a1
 Source1:	cpupower.service
 Source2:	cpupower.config
 Source3:	cpupower@.service
 %if "%{postver}" != ".0"
 Patch0:		https://www.kernel.org/pub/linux/kernel/v6.x/patch-%{version}.xz
-# Patch0-md5:	3c8b952eab39924691865454cbd2e32a
+# Patch0-md5:	e5639b9a45ccac69b564f3ef88cd2920
 %endif
 Patch1:		x32.patch
 Patch2:		regex.patch
 Patch3:		%{name}-perf-update.patch
 Patch4:		%{name}-perf-gtk2.patch
-Patch5:		undefined-syscalltbl__id_at_idx.patch
 URL:		https://www.kernel.org/
 BuildRequires:	bison
 BuildRequires:	docutils
@@ -419,7 +418,6 @@ cd linux-%{basever}
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
-%patch5 -p1
 
 %{__sed} -i -e '/^CFLAGS = /s/ -g / $(OPTFLAGS) /' tools/hv/Makefile
 %{__sed} -i -e '/^CFLAGS+=/s/ -O1 / $(OPTFLAGS) /' tools/thermal/tmon/Makefile
