@@ -76,7 +76,9 @@ BuildRequires:	gcc-multilib-x32
 %{?with_runqslower:BuildRequires:	kernel-vmlinux >= 5.?}
 BuildRequires:	libbpf-devel
 BuildRequires:	libcap-devel
+BuildRequires:	libstdc++-devel >= 6:8
 %{?with_libunwind:BuildRequires:	libunwind-devel >= 0.99}
+BuildRequires:	llvm-devel >= 13
 BuildRequires:	numactl-devel
 BuildRequires:	openssl-devel
 BuildRequires:	perl-devel >= 5.1
@@ -118,7 +120,7 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %endif
 %endif
 
-%define		makeopts	ARCH=%{makearch} CC="%{__cc}" %{?with_verbose:V=1}
+%define		makeopts	ARCH=%{makearch} CC="%{__cc}" CXX="%{__cxx}" %{?with_verbose:V=1}
 
 %description
 This package contains the software from tools/ subdirectory from Linux
@@ -486,6 +488,7 @@ CFLAGS="%{rpmcflags}" \
 
 # perf
 %if %{with perf}
+CXXFLAGS="%{rpmcxxflags}" \
 %{__make} -j1 -C tools/perf all man \
 %ifarch %{x8664}
 	IS_X86_64=1 \
@@ -593,6 +596,7 @@ install -p tools/power/cpupower/debug/x86_64/{centrino,powernow-k8}-decode $RPM_
 %endif
 
 %if %{with perf}
+CXXFLAGS="%{rpmcxxflags}" \
 %{__make} -C tools/perf install \
 %ifarch %{x8664}
 	IS_X86_64=1 \
