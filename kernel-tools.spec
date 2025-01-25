@@ -567,6 +567,9 @@ cd ../../..
 	%{makeopts} \
 	CFLAGS="%{rpmcflags}"
 
+# kernel-chktaint
+%{__make} -C tools/debugging
+
 %install
 rm -rf $RPM_BUILD_ROOT
 
@@ -671,6 +674,9 @@ install -d $RPM_BUILD_ROOT%{_mandir}/man8
 # gen_init_cpio
 install -p usr/gen_init_cpio $RPM_BUILD_ROOT%{_bindir}/gen_init_cpio
 
+%{__make} -C tools/debugging install \
+	DESTDIR=$RPM_BUILD_ROOT
+
 %clean
 rm -rf $RPM_BUILD_ROOT
 
@@ -697,6 +703,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/gen_init_cpio
 %attr(755,root,root) %{_bindir}/iio_event_monitor
 %attr(755,root,root) %{_bindir}/iio_generic_buffer
+%attr(755,root,root) %{_bindir}/kernel-chktaint
 %attr(755,root,root) %{_bindir}/lsgpio
 %attr(755,root,root) %{_bindir}/lsiio
 %attr(755,root,root) %{_bindir}/slabinfo
