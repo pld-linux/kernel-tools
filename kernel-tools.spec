@@ -413,13 +413,13 @@ Statyczna biblioteka usbip.
 cd linux-%{basever}
 
 %if "%{postver}" != ".0"
-%patch0 -p1
+%patch -P0 -p1
 %endif
 
-%patch1 -p1
-%patch2 -p1
-%patch3 -p1
-%patch4 -p1
+%patch -P1 -p1
+%patch -P2 -p1
+%patch -P3 -p1
+%patch -P4 -p1
 
 %{__sed} -i -e '/^CFLAGS = /s/ -g / $(OPTFLAGS) /' tools/hv/Makefile
 %{__sed} -i -e '/^CFLAGS+=/s/ -O1 / $(OPTFLAGS) /' tools/thermal/tmon/Makefile
