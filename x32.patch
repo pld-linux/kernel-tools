@@ -17,20 +17,26 @@ FIXME: verify x32 ABI support in regs_load.S
 +else
 +  IS_X32_BIT := 0
 +endif
---- linux-6.9/tools/perf/Makefile.config.orig	2024-05-22 06:16:41.511401784 +0200
-+++ linux-6.9/tools/perf/Makefile.config	2024-05-22 06:23:13.943609135 +0200
-@@ -63,6 +63,11 @@ ifeq ($(SRCARCH),x86)
+--- linux-6.14/tools/perf/Makefile.config.orig	2025-03-24 15:02:41.000000000 +0100
++++ linux-6.14/tools/perf/Makefile.config	2025-04-09 22:43:13.019125496 +0200
+@@ -48,9 +48,17 @@ ifeq ($(SRCARCH),x86)
+     endif
+     $(call detected,CONFIG_X86_64)
    else
-     LIBUNWIND_LIBS = -lunwind-x86 -llzma -lunwind
++   ifeq (${IS_X32_BIT}, 1)
++     CFLAGS += -DHAVE_ARCH_X32_SUPPORT
++     ARCH_INCLUDE = ../../arch/x86/lib/memcpy_64.S ../../arch/x86/lib/memset_64.S
++     ifndef NO_LIBUNWIND
++       LIBUNWIND_LIBS = -lunwind-x86_64 -llzma -lunwind
++     endif
++   else
+     ifndef NO_LIBUNWIND
+       LIBUNWIND_LIBS = -lunwind-x86 -llzma -lunwind
+     endif
++   endif
    endif
-+  ifeq (${IS_X32_BIT}, 1)
-+    CFLAGS += -DHAVE_ARCH_X32_SUPPORT
-+    ARCH_INCLUDE = ../../arch/x86/lib/memcpy_64.S ../../arch/x86/lib/memset_64.S
-+    LIBUNWIND_LIBS = -lunwind-x86_64 -llzma -lunwind
-+  endif
  endif
  
- ifeq ($(SRCARCH),arm)
 --- linux-5.11/tools/perf/arch/x86/tests/regs_load.S.orig	2021-02-14 23:32:24.000000000 +0100
 +++ linux-5.11/tools/perf/arch/x86/tests/regs_load.S	2021-02-25 21:46:57.425008548 +0100
 @@ -62,6 +62,41 @@
