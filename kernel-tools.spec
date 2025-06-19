@@ -20,7 +20,7 @@
 %endif
 
 %define		basever		6.15
-%define		postver		.0
+%define		postver		.2
 Summary:	Assortment of tools for the Linux kernel
 Summary(pl.UTF-8):	Zestaw narzędzi dla jądra Linuksa
 Name:		kernel-tools
@@ -35,7 +35,7 @@ Source2:	cpupower.config
 Source3:	cpupower@.service
 %if "%{postver}" != ".0"
 Patch0:		https://www.kernel.org/pub/linux/kernel/v6.x/patch-%{version}.xz
-# Patch0-md5:	e5639b9a45ccac69b564f3ef88cd2920
+# Patch0-md5:	25a3dd45bbafd0358ec68f797e627268
 %endif
 Patch1:		x32.patch
 Patch2:		regex.patch
