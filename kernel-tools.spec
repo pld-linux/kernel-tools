@@ -489,7 +489,7 @@ CFLAGS="%{rpmcflags}" \
 # perf
 %if %{with perf}
 CXXFLAGS="%{rpmcxxflags}" \
-%{__make} -j1 -C tools/perf all man \
+%{__make} -C tools/perf all man \
 %ifarch %{x8664}
 	IS_X86_64=1 \
 	%{!?with_multilib:NO_PERF_READ_VDSO32=1 NO_PERF_READ_VDSOX32=1} \
@@ -498,6 +498,7 @@ CXXFLAGS="%{rpmcxxflags}" \
 	%{!?with_libunwind:NO_LIBUNWIND=1} \
 	%{makeopts} \
 	EXTRA_CFLAGS="%{rpmcflags}" \
+	JOBS=%{__jobs} \
 	VF=1 \
 	WERROR=0 \
 	prefix=%{_prefix} \
