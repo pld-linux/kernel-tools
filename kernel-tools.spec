@@ -19,23 +19,23 @@
 %undefine	with_multilib
 %endif
 
-%define		basever		6.17
-%define		postver		.0
+%define		basever		6.18
+%define		postver		.1
 Summary:	Assortment of tools for the Linux kernel
 Summary(pl.UTF-8):	Zestaw narzędzi dla jądra Linuksa
 Name:		kernel-tools
 Version:	%{basever}%{postver}
-Release:	2
+Release:	1
 License:	GPL v2
 Group:		Applications/System
 Source0:	https://www.kernel.org/pub/linux/kernel/v6.x/linux-%{basever}.tar.xz
-# Source0-md5:	ac8cfd661ca56a142bb92f9d9e7754a0
+# Source0-md5:	9207ae77b0d63c22dc4646554963cfc7
 Source1:	cpupower.service
 Source2:	cpupower.config
 Source3:	cpupower@.service
 %if "%{postver}" != ".0"
 Patch0:		https://www.kernel.org/pub/linux/kernel/v6.x/patch-%{version}.xz
-# Patch0-md5:	25a3dd45bbafd0358ec68f797e627268
+# Patch0-md5:	dac2a9e84973152d0e92cf9a887aefdb
 %endif
 Patch1:		x32.patch
 Patch2:		regex.patch
@@ -362,12 +362,12 @@ sterowniki urządzeń USB oraz aplikacje mogą być używane bez żadnych
 modyfikacji. Komputer może wykorzystywać zdaln urządzenia USB tak,
 jakby były podłączone bezpośrednio. Przykładowe możliwości:
  - urządzenia USB do przechowywania danych: można używać programów
-   fdisk, mkfs, mount/umount, operacji na plikach, odtwarzać filmy
-   DVD oraz nagrywać nośniki DVD-R
+   fdisk, mkfs, mount/umount, operacji na plikach, odtwarzać filmy DVD
+   oraz nagrywać nośniki DVD-R
  - klawiatury i myszy USB: można ich używać na linuksowej konsoli oraz
    w systemie X Window
- - kamery i głośniki USB: można oglądać obraz z kamery, robić zdjęcia
-   i odtwarzać muzykę
+ - kamery i głośniki USB: można oglądać obraz z kamery, robić zdjęcia i
+   odtwarzać muzykę
  - drukarki, skanery, konwertery portów szeregowych oraz interfejsy
    sieciowe USB: można ich normalnie używać
 
@@ -610,6 +610,7 @@ CXXFLAGS="%{rpmcxxflags}" \
 %endif
 	%{?with_gtk:GTK2=1} \
 	%{!?with_libunwind:NO_LIBUNWIND=1} \
+	LIBPERL=1 \
 	%{makeopts} \
 	EXTRA_CFLAGS="%{rpmcflags}" \
 	WERROR=0 \
@@ -738,12 +739,12 @@ rm -rf $RPM_BUILD_ROOT
 
 %files cpupower-libs
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/libcpupower.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libcpupower.so.1
+%{_libdir}/libcpupower.so.*.*.*
+%ghost %{_libdir}/libcpupower.so.1
 
 %files cpupower-libs-devel
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/libcpupower.so
+%{_libdir}/libcpupower.so
 %{_includedir}/cpufreq.h
 %{_includedir}/cpuidle.h
 %{_includedir}/powercap.h
@@ -774,9 +775,9 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/perf-core/perf-archive
 %attr(755,root,root) %{_libdir}/perf-core/perf-iostat
 %dir %{_libdir}/perf-core/dlfilters
-%attr(755,root,root) %{_libdir}/perf-core/dlfilters/dlfilter-show-cycles.so
-%attr(755,root,root) %{_libdir}/perf-core/dlfilters/dlfilter-test-api-v0.so
-%attr(755,root,root) %{_libdir}/perf-core/dlfilters/dlfilter-test-api-v2.so
+%{_libdir}/perf-core/dlfilters/dlfilter-show-cycles.so
+%{_libdir}/perf-core/dlfilters/dlfilter-test-api-v0.so
+%{_libdir}/perf-core/dlfilters/dlfilter-test-api-v2.so
 
 %dir %{_libdir}/perf-core/scripts
 
@@ -819,7 +820,7 @@ rm -rf $RPM_BUILD_ROOT
 %if %{with gtk}
 %files perf-gtk
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/libperf-gtk.so
+%{_libdir}/libperf-gtk.so
 %endif
 
 %files -n bash-completion-perf
@@ -842,12 +843,12 @@ rm -rf $RPM_BUILD_ROOT
 
 %files -n usbip-libs
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/libusbip.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libusbip.so.0
+%{_libdir}/libusbip.so.*.*.*
+%ghost %{_libdir}/libusbip.so.0
 
 %files -n usbip-devel
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/libusbip.so
+%{_libdir}/libusbip.so
 %{_includedir}/usbip
 
 %files -n usbip-static
