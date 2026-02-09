@@ -11,18 +11,18 @@
 --- linux-5.16/tools/perf/arch/x86/tests/arch-tests.c.orig	2022-01-15 10:37:17.937990467 +0100
 +++ linux-5.16/tools/perf/arch/x86/tests/arch-tests.c	2022-01-15 11:34:56.522587040 +0100
 @@ -8,7 +8,7 @@ DEFINE_SUITE("x86 rdpmc", rdpmc);
+ 	.test_cases = intel_pt_tests,
  };
  
- #endif
 -#if defined(__x86_64__)
 +#if defined(__x86_64__) && !defined(__ILP32__)
  DEFINE_SUITE("x86 bp modify", bp_modify);
  #endif
  DEFINE_SUITE("AMD IBS via core pmu", amd_ibs_via_core_pmu);
 @@ -22,7 +22,7 @@ struct test_suite *arch_tests[] = {
+ 	&suite__insn_x86,
  #endif
  	&suite__intel_pt,
- #endif
 -#if defined(__x86_64__)
 +#if defined(__x86_64__) && !defined(__ILP32__)
  	&suite__bp_modify,
