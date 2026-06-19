@@ -19,7 +19,7 @@
 %undefine	with_multilib
 %endif
 
-%define		basever		7.0
+%define		basever		7.1
 %define		postver		.0
 Summary:	Assortment of tools for the Linux kernel
 Summary(pl.UTF-8):	Zestaw narzędzi dla jądra Linuksa
@@ -29,7 +29,7 @@ Release:	1
 License:	GPL v2
 Group:		Applications/System
 Source0:	https://www.kernel.org/pub/linux/kernel/v7.x/linux-%{basever}.tar.xz
-# Source0-md5:	1d35f79af3a784f986e4c3a154c0ecf5
+# Source0-md5:	b6b169bbd9c9c19857ad16db2ddf8def
 Source1:	cpupower.service
 Source2:	cpupower.config
 Source3:	cpupower@.service
