@@ -56,7 +56,7 @@ BuildRequires:	python3
 BuildRequires:	python3-modules
 BuildRequires:	readline-devel
 BuildRequires:	rpm-build >= 4.6
-BuildRequires:	rpmbuild(macros) >= 1.673
+BuildRequires:	rpmbuild(macros) >= 2.020
 BuildRequires:	tar >= 1:1.22
 BuildRequires:	xz
 %if %{with perf}
@@ -85,6 +85,7 @@ BuildRequires:	perl-devel >= 5.1
 BuildRequires:	python3-devel
 BuildRequires:	python3-setuptools
 BuildRequires:	rpm-pythonprov
+BuildRequires:	rust
 BuildRequires:	slang-devel
 BuildRequires:	xmlto
 BuildRequires:	xz-devel
@@ -120,7 +121,7 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %endif
 %endif
 
-%define		makeopts	ARCH=%{makearch} CC="%{__cc}" CXX="%{__cxx}" %{?with_verbose:V=1}
+%define		makeopts	ARCH=%{makearch} CC="%{__cc}" CXX="%{__cxx}" %{?with_verbose:V=1} RUSTC="%{__rustc}" RUST_FLAGS="%{rpmrustflags} --target=%rust_target"
 
 %description
 This package contains the software from tools/ subdirectory from Linux
