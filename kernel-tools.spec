@@ -25,7 +25,7 @@ Summary:	Assortment of tools for the Linux kernel
 Summary(pl.UTF-8):	Zestaw narzędzi dla jądra Linuksa
 Name:		kernel-tools
 Version:	%{basever}%{postver}
-Release:	1
+Release:	2
 License:	GPL v2
 Group:		Applications/System
 Source0:	https://www.kernel.org/pub/linux/kernel/v7.x/linux-%{basever}.tar.xz
@@ -464,6 +464,9 @@ CFLAGS="%{rpmcflags}" \
 %ifarch %{ix86} %{x8664} x32
 %{__make} -C tools/hv \
 	%{makeopts} \
+%ifarch %{ix86}
+	ARCH=x86 \
+%endif
 	OPTFLAGS="%{rpmcflags}"
 %endif
 
